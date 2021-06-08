@@ -1,5 +1,5 @@
 /**
- * @package Quarkus-Camunda-Showcase
+ * @package Quarkus-Workflow-Showcase
  *
  * @file Todo class and aggregate root
  * @copyright 2020-2021 Christoph Kappel <christoph@unexist.dev>

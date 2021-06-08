@@ -1,5 +1,5 @@
 /**
- * @package Quarkus-Camunda-Showcase
+ * @package Quarkus-Workflow-Showcase
  *
  * @file Todo serializer
  * @copyright 2021 Christoph Kappel <christoph@unexist.dev>

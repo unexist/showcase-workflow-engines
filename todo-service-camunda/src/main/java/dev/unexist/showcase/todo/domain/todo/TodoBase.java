@@ -1,5 +1,5 @@
 /**
- * @package Quarkus-Camunda-Showcase
+ * @package Quarkus-Workflow-Showcase
  *
  * @file Todo base class
  * @copyright 2020-2021 Christoph Kappel <christoph@unexist.dev>
