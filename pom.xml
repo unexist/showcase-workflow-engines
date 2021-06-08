@@ -3,8 +3,9 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>quarkus-camunda-showcase</artifactId>
+    <artifactId>quarkus-workflow-showcase</artifactId>
     <version>0.1</version>
+    <packaging>pom</packaging>
 
     <parent>
         <groupId>dev.unexist.showcase</groupId>
@@ -12,42 +13,8 @@
         <version>0.1</version>
     </parent>
 
-    <properties>
-        <camunda-bom.version>7.15.0</camunda-bom.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.camunda.bpm</groupId>
-                <artifactId>camunda-bom</artifactId>
-                <version>${camunda-bom.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <dependencies>
-        <!-- Quarkus -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-health</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-metrics</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-container-image-jib</artifactId>
-        </dependency>
-
-        <!-- Camunda -->
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-rest</artifactId>
-            <classifier>classes</classifier>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>todo-service-camunda</module>
+        <module>todo-service-kogito</module>
+    </modules>
 </project>
