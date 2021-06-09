@@ -14,22 +14,27 @@ package dev.unexist.showcase.todo.infrastructure.camunda;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.rest.spi.ProcessEngineProvider;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
 public class CamundaEngineProvider implements ProcessEngineProvider {
+
+    @Inject
+    CamundaEngine camundaEngine;
+
     public ProcessEngine getDefaultProcessEngine() {
-        return CamundaEngine.getProcessEngine();
+        return this.camundaEngine.getProcessEngine();
     }
 
     public ProcessEngine getProcessEngine(String name) {
-        return CamundaEngine.getProcessEngine();
+        return this.camundaEngine.getProcessEngine();
     }
 
     public Set<String> getProcessEngineNames() {
         Set<String> names = new HashSet<>();
 
-        names.add(CamundaEngine.getProcessEngine().getName());
+        names.add(this.camundaEngine.getProcessEngine().getName());
 
         return names;
     }

@@ -11,6 +11,7 @@
 
 package dev.unexist.showcase.todo.infrastructure.camunda;
 
+import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.RepositoryService;
@@ -23,44 +24,54 @@ import org.camunda.spin.plugin.impl.SpinProcessEnginePlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.InputStream;
 import java.util.List;
 
+@ApplicationScoped
 public class CamundaEngine {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaEngine.class);
-    private static final String JNDI = "jdbc/bpmds";
 
-    private static ProcessEngine processEngine;
+    @Inject
+    AgroalDataSource defaultDataSource;
 
-    public static ProcessEngine getProcessEngine() {
+    private ProcessEngine processEngine;
 
-        if (null == processEngine) {
-            try {
-
-                StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
-
-                List<ProcessEnginePlugin> pluginList = List.of(new SpinProcessEnginePlugin());
-
-                config.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
-                config.setJobExecutorActivate(true);
-                config.setDataSourceJndiName(JNDI);
-                config.setProcessEnginePlugins(pluginList);
-
-                processEngine = config.buildProcessEngine();
-            } catch (Exception e) {
-                LOGGER.error("getProcessEngine", e);
-            }
-        }
-
-        return processEngine;
+    public CamundaEngine() {
+        this.createProcessEngine();
+        this.deployProcess();
     }
 
-    public static void DeployProcesses() {
-        RepositoryService repositoryService = getProcessEngine().getRepositoryService();
+    public ProcessEngine getProcessEngine() {
+        return this.processEngine;
+    }
+
+    public void createProcessEngine() {
+        try {
+            StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
+
+            List<ProcessEnginePlugin> pluginList = List.of(new SpinProcessEnginePlugin());
+
+            config.setDataSource(this.defaultDataSource);
+            config.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+            config.setJobExecutorActivate(true);
+            config.setProcessEnginePlugins(pluginList);
+
+            this.processEngine = config.buildProcessEngine();
+        } catch (Exception e) {
+            LOGGER.error("getProcessEngine", e);
+        }
+    }
+
+
+    public void deployProcess() {
+        RepositoryService repositoryService = this.processEngine.getRepositoryService();
 
         try {
             ProcessDefinition process = repositoryService.createProcessDefinitionQuery()
-                    .processDefinitionKey("todo-retrieval")
+                    .processDefinitionKey("todo")
                     .latestVersion()
                     .singleResult();
 

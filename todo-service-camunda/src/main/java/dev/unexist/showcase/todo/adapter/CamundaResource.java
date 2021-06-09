@@ -12,7 +12,6 @@
 package dev.unexist.showcase.todo.adapter;
 
 import dev.unexist.showcase.todo.domain.todo.TodoBase;
-import dev.unexist.showcase.todo.domain.todo.TodoService;
 import dev.unexist.showcase.todo.infrastructure.camunda.CamundaEngine;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -35,14 +34,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.text.MessageFormat;
 
 @Path("/camunda")
 public class CamundaResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaResource.class);
 
     @Inject
-    TodoService todoService;
+    CamundaEngine camundaEngine;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -57,24 +55,22 @@ public class CamundaResource {
     public Response create(TodoBase base, @Context UriInfo info) {
         Response.ResponseBuilder response;
 
-        ProcessEngine ProcEngine = CamundaEngine.getProcessEngine();
+        ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
 
-        ObjectValue todoJson = Variables.objectValue(base)
+        ObjectValue todoAsJson = Variables.objectValue(base)
                         .serializationDataFormat("application/json").create();
 
         ProcessInstance processInstance = ProcEngine.getRuntimeService()
-                .createProcessInstanceByKey("todo-retrieval")
-                .setVariable("todoRequest", todoJson)
+                .createProcessInstanceByKey("todo")
+                .setVariable("todo", todoAsJson)
                 .executeWithVariablesInReturn();
 
         String id = processInstance.getId();
 
         URI uri = info.getAbsolutePathBuilder().path("/" + id).build();
 
-        String message = MessageFormat.format("process is started(process id= {0})", id);
+        LOGGER.info("Process {} started", id);
 
-        System.out.println(message);
-
-        return Response.created(uri).entity(message).build();
+        return Response.created(uri).build();
     }
 }
