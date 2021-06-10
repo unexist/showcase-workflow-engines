@@ -11,8 +11,7 @@
 
 package dev.unexist.showcase.todo.adapter.tasks;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.unexist.showcase.todo.domain.todo.Todo;
+import dev.unexist.showcase.todo.domain.todo.TodoBase;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.variable.VariableMap;
@@ -22,16 +21,12 @@ import org.slf4j.LoggerFactory;
 public class CamundaTodoTallyTask implements JavaDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaTodoTallyTask.class);
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         VariableMap varMap = execution.getVariablesTyped();
 
-        final String todoAsJson = varMap.getValue("todo", String.class);
+        final TodoBase todo = varMap.getValue("todo", TodoBase.class);
 
-        Todo todo = mapper.readValue(todoAsJson, Todo.class);
-
-        LOGGER.info("Todo check: {}", todoAsJson);
+        LOGGER.info("Todo tally task: {}", todo);
     }
 }
