@@ -11,3 +11,7 @@ Links
 ----
 https://docs.camunda.org/manual/7.15/reference/rest/overview/embeddability/
 https://github.com/kiegroup/kogito-operator
+
+Notes
+----
+- No JNDI support in quarkus
