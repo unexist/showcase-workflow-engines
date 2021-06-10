@@ -11,6 +11,7 @@
 
 package dev.unexist.showcase.todo.domain.todo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import dev.unexist.showcase.todo.infrastructure.serializer.DateSerializer;
 
@@ -18,9 +19,11 @@ import java.time.LocalDate;
 
 public class DueDate {
     @JsonSerialize(using = DateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate start;
 
     @JsonSerialize(using = DateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate due;
 
     /**
