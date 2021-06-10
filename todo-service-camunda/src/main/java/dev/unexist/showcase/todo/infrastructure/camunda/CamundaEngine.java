@@ -11,7 +11,6 @@
 
 package dev.unexist.showcase.todo.infrastructure.camunda;
 
-import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.RepositoryService;
@@ -25,8 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.sql.DataSource;
 import java.io.InputStream;
 import java.util.List;
 
@@ -34,27 +32,19 @@ import java.util.List;
 public class CamundaEngine {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaEngine.class);
 
-    @Inject
-    AgroalDataSource defaultDataSource;
-
     private ProcessEngine processEngine;
-
-    public CamundaEngine() {
-        this.createProcessEngine();
-        this.deployProcess();
-    }
 
     public ProcessEngine getProcessEngine() {
         return this.processEngine;
     }
 
-    public void createProcessEngine() {
+    public void createProcessEngine(DataSource dataSource) {
         try {
             StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
 
             List<ProcessEnginePlugin> pluginList = List.of(new SpinProcessEnginePlugin());
 
-            config.setDataSource(this.defaultDataSource);
+            config.setDataSource(dataSource);
             config.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
             config.setJobExecutorActivate(true);
             config.setProcessEnginePlugins(pluginList);
@@ -64,7 +54,6 @@ public class CamundaEngine {
             LOGGER.error("getProcessEngine", e);
         }
     }
-
 
     public void deployProcess() {
         RepositoryService repositoryService = this.processEngine.getRepositoryService();

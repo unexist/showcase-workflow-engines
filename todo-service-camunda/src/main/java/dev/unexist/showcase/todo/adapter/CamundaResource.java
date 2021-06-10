@@ -13,6 +13,7 @@ package dev.unexist.showcase.todo.adapter;
 
 import dev.unexist.showcase.todo.domain.todo.TodoBase;
 import dev.unexist.showcase.todo.infrastructure.camunda.CamundaEngine;
+import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
@@ -42,6 +43,9 @@ public class CamundaResource {
     @Inject
     CamundaEngine camundaEngine;
 
+    @Inject
+    AgroalDataSource defaultDataSource;
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -53,7 +57,8 @@ public class CamundaResource {
             @APIResponse(responseCode = "500", description = "Server error")
     })
     public Response create(TodoBase base, @Context UriInfo info) {
-        Response.ResponseBuilder response;
+        this.camundaEngine.createProcessEngine(this.defaultDataSource);
+        this.camundaEngine.deployProcess();
 
         ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
 

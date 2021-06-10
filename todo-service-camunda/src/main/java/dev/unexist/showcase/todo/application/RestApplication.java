@@ -13,6 +13,7 @@ package dev.unexist.showcase.todo.application;
 
 import dev.unexist.showcase.todo.adapter.CamundaResource;
 import dev.unexist.showcase.todo.adapter.TodoResource;
+import dev.unexist.showcase.todo.infrastructure.camunda.CamundaEngine;
 import org.camunda.bpm.engine.rest.impl.CamundaRestResources;
 
 import javax.ws.rs.core.Application;
@@ -28,6 +29,7 @@ public class RestApplication extends Application {
         /* Add your own classes */
         classes.add(TodoResource.class);
         classes.add(CamundaResource.class);
+        classes.add(CamundaEngine.class);
 
         /* Add all camunda engine rest resources (or just add those that you actually need) */
         classes.addAll(CamundaRestResources.getResourceClasses());
