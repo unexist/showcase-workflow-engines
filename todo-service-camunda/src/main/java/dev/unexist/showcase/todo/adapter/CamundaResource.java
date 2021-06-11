@@ -46,6 +46,11 @@ public class CamundaResource {
     @Inject
     AgroalDataSource defaultDataSource;
 
+    /*public CamundaResource() {
+        this.camundaEngine.createProcessEngineWithDataSource(this.defaultDataSource);
+        this.camundaEngine.deployProcess();
+    }*/
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -57,9 +62,6 @@ public class CamundaResource {
             @APIResponse(responseCode = "500", description = "Server error")
     })
     public Response create(TodoBase base, @Context UriInfo info) {
-        this.camundaEngine.createProcessEngine(this.defaultDataSource);
-        this.camundaEngine.deployProcess();
-
         ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
 
         ObjectValue todoAsJson = Variables.objectValue(base)

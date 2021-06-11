@@ -11,6 +11,7 @@
 
 package dev.unexist.showcase.todo.infrastructure.camunda;
 
+import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.RepositoryService;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.util.List;
@@ -34,11 +36,19 @@ public class CamundaEngine {
 
     private ProcessEngine processEngine;
 
+    @Inject
+    AgroalDataSource defaultDataSource;
+
     public ProcessEngine getProcessEngine() {
+        if (null == this.processEngine) {
+            this.createProcessEngineWithDataSource(this.defaultDataSource);
+            this.deployProcess();
+        }
+
         return this.processEngine;
     }
 
-    public void createProcessEngine(DataSource dataSource) {
+    private void createProcessEngineWithDataSource(DataSource dataSource) {
         try {
             StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
 
@@ -55,7 +65,7 @@ public class CamundaEngine {
         }
     }
 
-    public void deployProcess() {
+    private void deployProcess() {
         RepositoryService repositoryService = this.processEngine.getRepositoryService();
 
         try {
