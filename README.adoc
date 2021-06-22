@@ -1,4 +1,4 @@
-= Quarkus workflow showcase
+= Showcase for workflow engines based on quarkus
 
 This project holds a showcase for various workflow engine things.
 
