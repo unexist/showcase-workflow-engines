@@ -15,6 +15,7 @@
 
     <modules>
         <module>todo-service-camunda</module>
+        <module>todo-service-camunda-spring</module>
         <module>todo-service-kogito</module>
     </modules>
 </project>
