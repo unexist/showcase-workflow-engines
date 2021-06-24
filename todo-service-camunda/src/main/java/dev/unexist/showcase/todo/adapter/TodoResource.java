@@ -143,7 +143,7 @@ public class TodoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Delete todo by id")
     @Tag(name = "Todo")
-    public Response delete(@PathParam("id") int id, TodoBase base) {
+    public Response delete(@PathParam("id") int id) {
         Response.ResponseBuilder response;
 
         if (this.todoService.delete(id)) {
