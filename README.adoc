@@ -1,4 +1,4 @@
-= Showcase for workflow engines based on quarkus
+= Showcase for workflow engines based on quarkus and spring
 
 This project holds a showcase for various workflow engine things.
 
@@ -11,8 +11,12 @@ This project holds a showcase for various workflow engine things.
 
 - https://docs.camunda.org/manual/7.15/reference/rest/overview/embeddability/
 - https://github.com/kiegroup/kogito-operator
+- https://camunda.com/blog/2021/03/external-task-client-spring-bootified/
 
 == Problems
 
 - No JNDI support in quarkus
 - Datasource must be passed to engine which is only accessible via injection
+- The rest path has been changed recently in camunda:
+.. Old: http://localhost:8080/rest/engine/default/process-definition/key/todo/start
+.. New: http://localhost:8080/engine-rest/engine/default/process-definition/key/todo/start
