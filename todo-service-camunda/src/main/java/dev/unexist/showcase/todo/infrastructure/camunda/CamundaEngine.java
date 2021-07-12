@@ -11,6 +11,7 @@
 
 package dev.unexist.showcase.todo.infrastructure.camunda;
 
+import dev.unexist.showcase.todo.adapter.tasks.CamundaTodoCheckTask;
 import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
@@ -23,12 +24,14 @@ import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.spin.plugin.impl.SpinProcessEnginePlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ClassUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class CamundaEngine {
@@ -54,10 +57,14 @@ public class CamundaEngine {
 
             List<ProcessEnginePlugin> pluginList = List.of(new SpinProcessEnginePlugin());
 
+            Map<Object, Object> beanList = Map.of(
+                    ClassUtils.getShortNameAsProperty(CamundaTodoCheckTask.class), CamundaTodoCheckTask.class);
+
             config.setDataSource(dataSource);
             config.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
             config.setJobExecutorActivate(true);
             config.setProcessEnginePlugins(pluginList);
+            config.setBeans(beanList);
 
             this.processEngine = config.buildProcessEngine();
         } catch (Exception e) {
@@ -79,9 +86,9 @@ public class CamundaEngine {
 
                 InputStream inputStream = classLoader.getResourceAsStream("todo.bpmn");
 
-                BpmnModelInstance payment = Bpmn.readModelFromStream(inputStream);
+                BpmnModelInstance todoInstance = Bpmn.readModelFromStream(inputStream);
                 repositoryService.createDeployment()
-                        .addModelInstance("todo.bpmn", payment)
+                        .addModelInstance("todo.bpmn", todoInstance)
                         .deploy();
 
                 LOGGER.info("Process definition inputStream deployed");
