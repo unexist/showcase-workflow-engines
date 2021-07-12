@@ -18,6 +18,11 @@ import org.camunda.bpm.engine.variable.VariableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Named;
+
+@Dependent
+@Named
 public class CamundaTodoTallyTask implements JavaDelegate {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaTodoTallyTask.class);
 
