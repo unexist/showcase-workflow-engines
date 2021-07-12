@@ -12,7 +12,7 @@
       <bpmn:incoming>SequenceFlow_1axd8hr</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1axd8hr" sourceRef="Task_19pt1nu" targetRef="EndEvent_1oyw02k" />
-    <bpmn:serviceTask id="Task_0q4zvgp" name="Check Todo" camunda:class="dev.unexist.showcase.todo.adapter.tasks.CamundaTodoCheckTask">
+    <bpmn:serviceTask id="Task_0q4zvgp" name="Check Todo" camunda:delegateExpression="${camundaTodoCheckTask}">
       <bpmn:incoming>SequenceFlow_1p2szow</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_04u8b2b</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -42,9 +42,6 @@
           <dc:Bounds x="145" y="137" width="74" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1m8bv3v_di" bpmnElement="Task_0q4zvgp">
-        <dc:Bounds x="310" y="79" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_17yjgnl_di" bpmnElement="Task_19pt1nu">
         <dc:Bounds x="480" y="79" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -53,6 +50,9 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="654" y="147" width="54" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1m8bv3v_di" bpmnElement="Task_0q4zvgp">
+        <dc:Bounds x="310" y="79" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
