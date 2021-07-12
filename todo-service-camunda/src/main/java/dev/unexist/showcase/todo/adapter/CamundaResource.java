@@ -43,14 +43,6 @@ public class CamundaResource {
     @Inject
     CamundaEngine camundaEngine;
 
-    @Inject
-    AgroalDataSource defaultDataSource;
-
-    /*public CamundaResource() {
-        this.camundaEngine.createProcessEngineWithDataSource(this.defaultDataSource);
-        this.camundaEngine.deployProcess();
-    }*/
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
