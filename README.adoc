@@ -9,9 +9,15 @@ This project holds a showcase for various workflow engine things.
 
 == Links
 
+=== Camunda
+
 - https://docs.camunda.org/manual/7.15/reference/rest/overview/embeddability/
 - https://github.com/kiegroup/kogito-operator
 - https://camunda.com/blog/2021/03/external-task-client-spring-bootified/
+
+=== Kogito
+
+- https://kiegroup.github.io/kogito-online/#/editor/bpmn
 
 == Problems
 
