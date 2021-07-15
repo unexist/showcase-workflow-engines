@@ -39,9 +39,32 @@ curl -X 'POST' \
 endef
 export JSON_TODO_SPRING
 
+define JSON_TODO_KOGITO
+curl -X 'POST' \
+  'http://localhost:8080/kogito' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "description": "string",
+  "done": true,
+  "dueDate": {
+    "due": "2021-05-07",
+    "start": "2021-05-07"
+  },
+  "title": "string"
+}'
+endef
+export JSON_TODO_KOGITO
+
 # Tools
 todo-quarkus:
 	@echo $$JSON_TODO_QUARKUS | bash
 
 todo-spring:
 	@echo $$JSON_TODO_SPRING | bash
+
+todo-kogito:
+	@echo $$JSON_TODO_KOGITO | bash
+
+list:
+	@curl -X 'GET' 'http://localhost:8080/todo' -H 'accept: */*' | jq .
