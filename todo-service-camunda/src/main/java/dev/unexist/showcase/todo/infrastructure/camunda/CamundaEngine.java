@@ -12,6 +12,7 @@
 package dev.unexist.showcase.todo.infrastructure.camunda;
 
 import dev.unexist.showcase.todo.adapter.tasks.CamundaTodoCheckTask;
+import dev.unexist.showcase.todo.adapter.tasks.CamundaTodoTallyTask;
 import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
@@ -57,8 +58,11 @@ public class CamundaEngine {
 
             List<ProcessEnginePlugin> pluginList = List.of(new SpinProcessEnginePlugin());
 
+            /* Provide list of beans */
             Map<Object, Object> beanList = Map.of(
-                    ClassUtils.getShortNameAsProperty(CamundaTodoCheckTask.class), CamundaTodoCheckTask.class);
+                    ClassUtils.getShortNameAsProperty(CamundaTodoCheckTask.class), CamundaTodoCheckTask.class,
+                    ClassUtils.getShortNameAsProperty(CamundaTodoTallyTask.class), CamundaTodoTallyTask.class
+            );
 
             config.setDataSource(dataSource);
             config.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
