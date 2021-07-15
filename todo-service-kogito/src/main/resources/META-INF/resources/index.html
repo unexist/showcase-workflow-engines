@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>unexist.dev</title>
+    <style type="text/css">
+        :root {
+            /* Colors */
+            --font-color: #fff;
+            --font-color2: #aaa;
+            --link-color: #8cf;
+            --highlight-color: #ff8000;
+            --border-color: #446979;
+            --top-color: #313536;
+            --bottom-color: #1D2021;
+            --h1-color: #888;
+            --h2-color: #777;
+            --h3-color: #666;
+            --h4-color: #d7ba7d;
+            --code-color: #d7ba7d;
+            --cite-color: #777;
+
+            /* Misc */
+            --margin: 10px;
+            --padding: 10px;
+            --radius: 8px;
+            --border: 1px solid var(--top-color);
+        }
+
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        /* Layout */
+        body {
+            background-color: var(--bottom-color);
+            color: var(--font-color);
+            font-family: HelveticaNeue,"Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        nav {
+            background-color: var(--bottom-color);
+            border-radius: var(--radius) var(--radius) 0px 0px;
+            font-size: 90%;
+        }
+
+        footer {
+            color: var(--font-color2);
+            background-color: var(--top-color);
+            border-left: var(--border);
+            border-right: var(--border);
+            border-bottom: var(--border);
+            border-radius: 0px 0px var(--radius) var(--radius);
+            font-size: 70%;
+            text-align: center;
+        }
+
+        footer a:link, footer a:visited {
+            color: var(--font-color2);
+            text-decoration: underline;
+        }
+
+        footer a:hover {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        #container {
+            width: 100%;
+        }
+
+        #split {
+            display: table;
+            padding-top: var(--padding);
+            border-left: var(--border);
+            border-right: var(--border);
+        }
+
+        #content {
+            display: table-cell;
+            padding-right: var(--padding);
+        }
+
+        #content h1 {
+            text-decoration: none;
+            border-bottom: 1px solid var(--h1-color);
+            margin-bottom: 10px;
+        }
+
+        #content h2 {
+            text-decoration: none;
+            border-bottom: 1px solid var(--h2-color);
+            margin-bottom: 10px;
+        }
+
+        #sidebar a {
+            display: block;
+        }
+
+        #header {
+            background-color: var(--top-color);
+            width: 100%;
+        }
+
+        #headline, #split, nav, footer {
+            width: 70%;
+            margin: 0px auto;
+            padding: var(--padding);
+
+            /* Stupid hack */
+            min-width: 844px;
+        }
+
+        @media screen and (max-width: 899px) {
+            #headline, #split, nav, footer {
+                width: 100%;
+            }
+        }
+
+        #headline h1 {
+            display: inline-block;
+            text-decoration: none;
+            border-bottom: none;
+        }
+
+        #headline h2 {
+            display: inline-block;
+            padding-left: var(--padding);
+            border-bottom: none;
+        }
+
+        /* Text */
+        a:link, a:visited {
+            text-decoration: none;
+            color: var(--link-color);
+        }
+
+        a:hover {
+            color: var(--highlight-color);
+        }
+
+        h1 {
+            color: var(--h1-color);
+            text-decoration: none;
+            border-bottom: 1px solid var(--h1-color);
+        }
+
+        h2 {
+            color: var(--h2-color);
+            text-decoration: none;
+            border-bottom: 1px solid var(--h2-color);
+        }
+
+        h3 {
+            color: var(--h3-color);
+            text-decoration: underline;
+            display: inline;
+        }
+
+        h3, h4 {
+            padding-top: 10px;
+        }
+
+        h4 {
+            color: var(--h4-color);
+        }
+
+        .post-content li {
+            margin-left: 40px;
+            padding: 0px 0px var(--padding) 0px;
+            color: var(--font-color2);
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="header">
+        <div id="headline">
+            <h1>unexist.dev</h1>
+            <h2></h2>
+            <h2></h2>
+            <p>Showcase for @project.artifactId@</p>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="https://unexist.dev">Projects</a>
+            <a href="https://hg.unexist.dev">Repositories</a>
+        </nav>
+    </div>
+    <div id="split">
+        <div id="content">
+            <div id="posts">
+                <h2>Information</h2>
+
+                <div class="post-content">
+                    <ul>
+                        <li>
+                            <h3>Group</h3>: @project.groupId@
+                        </li>
+                        <li>
+                            <h3>Artifact</h3>: @project.artifactId@
+                        </li>
+                        <li>
+                            <h3>Version</h3>: @project.version@
+                        </li>
+                        <li>
+                            <h3>Build</h3> on @timestamp@ by @hg.author@
+                        </li>
+                    </ul>
+                </div>
+
+                <h2>Links</h2>
+
+                <div class="post-content">
+                    <ul>
+                        <li><a href="/q/dev">Developer console</a></li>
+                        <li><a href="/q/swagger-ui">Swagger UI</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <a href="/feed.xml">RSS</a>
+        &middot;
+        <a href="https://github.com/unexist">unexist @ GitHub</a>
+        &middot;
+        <a href="https://twitter.com/chkappel">unexist @ Twitter</a>
+    </footer>
+</div>
+</body>
+</html>
