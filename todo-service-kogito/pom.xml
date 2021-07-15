@@ -37,32 +37,13 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-smallrye-metrics</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
             <artifactId>quarkus-container-image-jib</artifactId>
         </dependency>
 
-        <!-- Camunda -->
+        <!-- Kogito -->
         <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-rest</artifactId>
-            <classifier>classes</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine</artifactId>
-        </dependency>
-
-        <!-- Camunda JSON/XML handling -->
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-plugin-spin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.spin</groupId>
-            <artifactId>camunda-spin-dataformat-all</artifactId>
+            <groupId>org.kie.kogito</groupId>
+            <artifactId>kogito-quarkus</artifactId>
         </dependency>
     </dependencies>
 </project>
