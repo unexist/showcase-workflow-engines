@@ -12,17 +12,29 @@ This project holds a showcase for various workflow engine things.
 === Camunda
 
 - https://docs.camunda.org/manual/7.15/reference/rest/overview/embeddability/
-- https://github.com/kiegroup/kogito-operator
 - https://camunda.com/blog/2021/03/external-task-client-spring-bootified/
 
 === Kogito
 
+- https://quarkus.io/guides/kogito
 - https://kiegroup.github.io/kogito-online/#/editor/bpmn
+- https://github.com/kiegroup/kogito-operator
+- https://blog.kie.org/2021/05/simplest-custom-tasks-in-kogito.html
+- https://github.com/kiegroup/kogito-examples
 
 == Problems
+
+=== Camunda
 
 - No JNDI support in quarkus
 - Datasource must be passed to engine which is only accessible via injection
 - The rest path has been changed recently in camunda:
 .. Old: http://localhost:8080/rest/engine/default/process-definition/key/todo/start
 .. New: http://localhost:8080/engine-rest/engine/default/process-definition/key/todo/start
+
+=== Kogito
+
+[source]
+----
+Fire rule limit reached 10000, limit can be set via system property org.jbpm.rule.task.firelimit or via data input of business rule task named FireRuleLimit
+----
