@@ -41,20 +41,25 @@ export JSON_TODO_SPRING
 
 define JSON_TODO_KOGITO
 curl -X 'POST' \
-  'http://localhost:8080/kogito' \
+  'http://localhost:8080/todos' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "description": "string",
-  "done": true,
-  "dueDate": {
-    "due": "2021-05-07",
-    "start": "2021-05-07"
-  },
-  "title": "string"
+  "todo": {
+    "description": "string",
+    "done": false,
+    "dueDate": {
+      "due": "2021-05-07",
+      "start": "2021-05-07"
+    },
+    "title": "string"
+  }
 }'
 endef
 export JSON_TODO_KOGITO
+
+update:
+	mv ~/Downloads/todo.txt todo.bpmn
 
 # Tools
 todo-quarkus:
