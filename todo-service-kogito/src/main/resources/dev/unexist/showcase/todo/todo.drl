@@ -5,7 +5,7 @@ import dev.unexist.showcase.todo.domain.todo.TodoBase;
 
 rule "isDone" ruleflow-group "todo"
     when
-        $todo: TodoBase(2 > 1)
+        $todo: TodoBase(done != true)
     then
         modify($todo) {
             setDone(true)
