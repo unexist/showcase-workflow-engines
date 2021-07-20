@@ -59,7 +59,7 @@ endef
 export JSON_TODO_KOGITO
 
 update:
-	mv ~/Downloads/todo.txt todo.bpmn
+	mv ~/Downloads/todo.txt todo-service-kogito/src/main/resources/dev/unexist/showcase/todo/todo.bpmn
 
 # Tools
 todo-quarkus:
