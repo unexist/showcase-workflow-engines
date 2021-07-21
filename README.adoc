@@ -21,6 +21,8 @@ This project holds a showcase for various workflow engine things.
 - https://github.com/kiegroup/kogito-operator
 - https://blog.kie.org/2021/05/simplest-custom-tasks-in-kogito.html
 - https://github.com/kiegroup/kogito-examples
+- https://developers.redhat.com/articles/2021/06/24/automating-rule-based-services-java-and-kogito#automating_business_rules_with_kogito
+- https://github.com/KIE-Learning/kogito-enablement/blob/master/modules/04_Kogito_CDI/04_1_Kogito_Service_Task_CDI_Lab.adoc
 
 == Problems
 
