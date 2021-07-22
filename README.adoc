@@ -23,13 +23,15 @@ This project holds a showcase for various workflow engine things.
 - https://github.com/kiegroup/kogito-examples
 - https://developers.redhat.com/articles/2021/06/24/automating-rule-based-services-java-and-kogito#automating_business_rules_with_kogito
 - https://github.com/KIE-Learning/kogito-enablement/blob/master/modules/04_Kogito_CDI/04_1_Kogito_Service_Task_CDI_Lab.adoc
+- https://docs.jboss.org/kogito/release/latest/html_single/
+- https://blog.kie.org/2021/06/kogito-task-management-api.html
 
 == Problems
 
 === Camunda
 
 - No JNDI support in quarkus
-- Datasource must be passed to engine which is only accessible via injection
+.. Datasource must be passed to engine which is only accessible via injection
 - The rest path has been changed recently in camunda:
 .. Old: http://localhost:8080/rest/engine/default/process-definition/key/todo/start
 .. New: http://localhost:8080/engine-rest/engine/default/process-definition/key/todo/start
@@ -40,3 +42,5 @@ This project holds a showcase for various workflow engine things.
 ----
 Fire rule limit reached 10000, limit can be set via system property org.jbpm.rule.task.firelimit or via data input of business rule task named FireRuleLimit
 ----
+
+This basically means there is a loop in a rule and it is called repetitively.
