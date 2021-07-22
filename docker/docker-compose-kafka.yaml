@@ -1,0 +1,41 @@
+version: "3.5"
+
+services:
+  # Install zookeeper
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper
+    environment:
+      SERVICE_NAME: zookeeper
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  # Install kafka and create needed topics
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka
+    hostname: kafka
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_HOST://kafka:29092
+      LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+
+  # Create topics
+  create-topics:
+    container_name: create-topics
+    image: confluentinc/cp-kafka
+    depends_on:
+      - kafka
+    command: bash -c "kafka-topics --bootstrap-server kafka:29092 --create --topic todo_in
+      --partitions 1 --replication-factor 1 --if-not-exists &&
+      kafka-topics --bootstrap-server kafka:29092 --create --topic todo_out
+      --partitions 1 --replication-factor 1 --if-not-exists"
+
