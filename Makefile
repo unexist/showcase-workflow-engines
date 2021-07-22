@@ -1,3 +1,5 @@
+RPK_PORT := 55025
+
 define JSON_TODO_QUARKUS
 curl -X 'POST' \
   'http://localhost:8080/camunda' \
@@ -58,6 +60,31 @@ curl -X 'POST' \
 endef
 export JSON_TODO_KOGITO
 
+define CE_TODO_KAFKA
+echo 'test%{
+  "specversion": "0.3",
+  "id": "21627e26-31eb-43e7-8343-92a696fd96b1",
+  "source": "",
+  "type": "VisaApplicationsMessageDataEvent_8",
+  "time": "2019-10-01T12:02:23.812262+02:00[Europe/Warsaw]",
+  "data": {
+    "description": "string",
+    "done": false,
+    "dueDate": {
+      "due": "2022-05-08",
+      "start": "2022-05-07"
+    },
+    "title": "string"
+  }
+}' | kafkacat -t todo_in -b localhost:$(RPK_PORT) -P -K%
+endef
+export CE_TODO_KAFKA
+
+# Docker
+.PHONY: docker
+docker:
+	@lazydocker -f docker/docker-compose-kafka.yaml
+
 # Tools
 todo-quarkus:
 	@echo $$JSON_TODO_QUARKUS | bash
@@ -70,3 +97,21 @@ todo-kogito:
 
 list:
 	@curl -X 'GET' 'http://localhost:8080/todo' -H 'accept: */*' | jq .
+
+# Kafkacat
+kat-send:
+	@echo $$CE_TODO_KAFKA | bash
+
+kat-listen:
+	kafkacat -t todo_out -b localhost:$(RPK_PORT) -C
+
+kat-test:
+	kafkacat -t todo_in -b localhost:$(RPK_PORT) -P
+
+# RPK
+rpk-topics:
+	rpk topic --brokers localhost:$(RPK_PORT) create todo_in --replicas 1
+	rpk topic --brokers localhost:$(RPK_PORT) create todo_out --replicas 1
+
+rpk-list:
+	rpk topic --brokers localhost:$(RPK_PORT) list
