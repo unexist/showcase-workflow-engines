@@ -25,6 +25,12 @@ This project holds a showcase for various workflow engine things.
 - https://github.com/KIE-Learning/kogito-enablement/blob/master/modules/04_Kogito_CDI/04_1_Kogito_Service_Task_CDI_Lab.adoc
 - https://docs.jboss.org/kogito/release/latest/html_single/
 - https://blog.kie.org/2021/06/kogito-task-management-api.html
+- https://github.com/kiegroup/kogito-runtimes/tree/master/quarkus/addons
+
+=== Redpanda
+
+- https://github.com/vectorizedio/redpanda
+- https://vectorized.io/blog/getting-started-rpk/
 
 == Problems
 
@@ -40,7 +46,8 @@ This project holds a showcase for various workflow engine things.
 
 [source]
 ----
-Fire rule limit reached 10000, limit can be set via system property org.jbpm.rule.task.firelimit or via data input of business rule task named FireRuleLimit
+Fire rule limit reached 10000, limit can be set via system property org.jbpm.rule.task.firelimit or
+via data input of business rule task named FireRuleLimit
 ----
 
 This basically means there is a loop in a rule and it is called repetitively.
