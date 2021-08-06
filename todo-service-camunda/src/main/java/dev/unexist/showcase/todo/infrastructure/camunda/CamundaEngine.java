@@ -38,10 +38,10 @@ import java.util.Map;
 public class CamundaEngine {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaEngine.class);
 
-    private ProcessEngine processEngine;
-
     @Inject
     AgroalDataSource defaultDataSource;
+
+    private ProcessEngine processEngine;
 
     public ProcessEngine getProcessEngine() {
         if (null == this.processEngine) {

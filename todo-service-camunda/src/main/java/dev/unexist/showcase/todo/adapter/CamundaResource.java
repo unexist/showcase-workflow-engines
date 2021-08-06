@@ -13,7 +13,6 @@ package dev.unexist.showcase.todo.adapter;
 
 import dev.unexist.showcase.todo.domain.todo.TodoBase;
 import dev.unexist.showcase.todo.infrastructure.camunda.CamundaEngine;
-import io.agroal.api.AgroalDataSource;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
@@ -54,12 +53,12 @@ public class CamundaResource {
             @APIResponse(responseCode = "500", description = "Server error")
     })
     public Response create(TodoBase base, @Context UriInfo info) {
-        ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
+        ProcessEngine procEngine = this.camundaEngine.getProcessEngine();
 
         ObjectValue todoAsJson = Variables.objectValue(base)
-                        .serializationDataFormat("application/json").create();
+                .serializationDataFormat("application/json").create();
 
-        ProcessInstance processInstance = ProcEngine.getRuntimeService()
+        ProcessInstance processInstance = procEngine.getRuntimeService()
                 .createProcessInstanceByKey("todo")
                 .setVariable("todo", todoAsJson)
                 .executeWithVariablesInReturn();

@@ -1,6 +1,5 @@
 /**
  * @package Quarkus-Workflow-Showcase
- *
  * @file Todo resource
  * @copyright 2021 Christoph Kappel <christoph@unexist.dev>
  * @version $Id$
@@ -70,8 +69,13 @@ public class TodoResource {
     @Operation(summary = "Get all todos")
     @Tag(name = "Todo")
     @APIResponses({
-            @APIResponse(responseCode = "200", description = "List of todo", content =
-                @Content(schema = @Schema(type = SchemaType.ARRAY, implementation = Todo.class))),
+            @APIResponse(
+                    responseCode = "200",
+                    description = "List of todo",
+                    content = @Content(
+                            schema = @Schema(
+                                    type = SchemaType.ARRAY,
+                                    implementation = Todo.class))),
             @APIResponse(responseCode = "204", description = "Nothing found"),
             @APIResponse(responseCode = "500", description = "Server error")
     })
@@ -96,7 +100,7 @@ public class TodoResource {
     @Tag(name = "Todo")
     @APIResponses({
             @APIResponse(responseCode = "200", description = "Todo found", content =
-                @Content(schema = @Schema(implementation = Todo.class))),
+            @Content(schema = @Schema(implementation = Todo.class))),
             @APIResponse(responseCode = "404", description = "Todo not found"),
             @APIResponse(responseCode = "500", description = "Server error")
     })
