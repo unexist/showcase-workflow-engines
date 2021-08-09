@@ -15,7 +15,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@ComponentScan(basePackages = "dev.unexist.showcase.todo")
 public class SpringRestApplication {
+    @SuppressWarnings("UncommentedMain")
     public static void main(String... args) {
         SpringApplication.run(SpringRestApplication.class, args);
     }

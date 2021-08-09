@@ -19,22 +19,21 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,103 +45,103 @@ public class TodoResource {
     TodoService todoService;
 
     @Operation(summary = "Create new todo")
-    @Tag(name = "Todo")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Todo created"),
             @ApiResponse(responseCode = "406", description = "Bad data"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public Response create(@RequestBody TodoBase base) {
-        Response.ResponseBuilder response;
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity create(@RequestBody TodoBase base) {
+        ResponseEntity response;
 
         if (this.todoService.create(base)) {
-            response = Response.status(Response.Status.CREATED);
+            response = ResponseEntity.ok().build();
         } else {
-            response = Response.status(Response.Status.NOT_ACCEPTABLE);
+            response = new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return response.build();
+        return response;
     }
 
     @Operation(summary = "Get all todos")
-    @Tag(name = "Todo")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "List of todo", content =
-                @Content(array = @ArraySchema(schema = @Schema(implementation = Todo.class)))),
+            @Content(array = @ArraySchema(schema = @Schema(implementation = Todo.class)))),
             @ApiResponse(responseCode = "204", description = "Nothing found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON)
-    public Response getAll() {
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Todo>> getAll() {
         List<Todo> todoList = this.todoService.getAll();
 
-        Response.ResponseBuilder response;
+        ResponseEntity response;
 
         if (todoList.isEmpty()) {
-            response = Response.noContent();
+            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            response = Response.ok(Entity.json(todoList));
+            response = ResponseEntity.ok(todoList);
         }
 
-        return response.build();
+        return response;
     }
 
     @Operation(summary = "Get todo by id")
-    @Tag(name = "Todo")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Todo found", content =
-                @Content(schema = @Schema(implementation = Todo.class))),
+            @Content(schema = @Schema(implementation = Todo.class))),
             @ApiResponse(responseCode = "404", description = "Todo not found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON)
-    public Response findById(@Parameter(description = "Todo id") @RequestParam("id") int id) {
+    @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Todo> findById(@Parameter(description = "Todo id")
+                                         @RequestParam("id") int id) {
         Optional<Todo> result = this.todoService.findById(id);
 
-        Response.ResponseBuilder response;
+        ResponseEntity response;
 
         if (result.isPresent()) {
-            response = Response.ok(Entity.json(result.get()));
+            response = ResponseEntity.ok(result.get());
         } else {
-            response = Response.status(Response.Status.NOT_FOUND);
+            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return response.build();
+        return response;
     }
 
     @Operation(summary = "Update todo by id")
-    @Tag(name = "Todo")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Todo updated"),
             @ApiResponse(responseCode = "404", description = "Todo not found"),
             @ApiResponse(responseCode = "500", description = "Server error")
     })
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public Response update(@Parameter(description = "Todo id") @RequestParam("id") int id, @RequestBody TodoBase base) {
-        Response.ResponseBuilder response;
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity update(@Parameter(description = "Todo id")
+                                 @RequestParam("id") int id, @RequestBody TodoBase base) {
+        ResponseEntity response;
 
         if (this.todoService.update(id, base)) {
-            response = Response.noContent();
+            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            response = Response.status(Response.Status.NOT_FOUND);
+            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return response.build();
+        return response;
     }
 
     @Operation(summary = "Delete todo by id")
-    @Tag(name = "Todo")
-    @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public Response delete(@Parameter(description = "Todo id") @RequestParam("id") int id) {
-        Response.ResponseBuilder response;
+    @DeleteMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity delete(@Parameter(description = "Todo id") @RequestParam("id") int id) {
+        ResponseEntity response;
 
         if (this.todoService.delete(id)) {
-            response = Response.noContent();
+            response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            response = Response.status(Response.Status.NOT_FOUND);
+            response = new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return response.build();
+        return response;
     }
 }
