@@ -21,7 +21,6 @@ public class Todo extends TodoBase {
     public Todo() {
     }
 
-
     /**
      * Constructor
      *
