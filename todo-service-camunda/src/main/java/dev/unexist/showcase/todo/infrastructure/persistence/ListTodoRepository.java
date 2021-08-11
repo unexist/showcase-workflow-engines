@@ -67,7 +67,7 @@ public class ListTodoRepository implements TodoRepository {
 
             ret = true;
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.warn("update: id={} not found", id);
+            LOGGER.warn("deleteById: id={} not found", id);
         }
 
         return ret;

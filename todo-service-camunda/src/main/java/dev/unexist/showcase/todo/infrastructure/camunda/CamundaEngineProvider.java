@@ -23,13 +23,33 @@ public class CamundaEngineProvider implements ProcessEngineProvider {
     @Inject
     CamundaEngine camundaEngine;
 
+    /**
+     * Get default process engine via SPI
+     *
+     * @return Default {@link ProcessEngine}
+     **/
+
     public ProcessEngine getDefaultProcessEngine() {
         return this.camundaEngine.getProcessEngine();
     }
 
+    /**
+     * Get process engine by name
+     *
+     * @param  name  Name of the engine
+     *
+     * @return Found {@link ProcessEngine}
+     **/
+
     public ProcessEngine getProcessEngine(String name) {
         return this.camundaEngine.getProcessEngine();
     }
+
+    /**
+     * Get list of all engine names
+     *
+     * @return List of known engine names
+     **/
 
     public Set<String> getProcessEngineNames() {
         Set<String> names = new HashSet<>();

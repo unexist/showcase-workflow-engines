@@ -31,10 +31,9 @@ public class KogitoService {
     /**
      * Check values of given {@link TodoBase}
      *
-     * @param todo
-     *          A {@link TodoBase}
-     * @return
-     *          Result message
+     * @param  todo  A {@link TodoBase}
+     *
+     * @return Result message
      **/
 
     public String checkTodo(TodoBase todo) {
@@ -54,10 +53,9 @@ public class KogitoService {
     /**
      * Store given {@link TodoBase}
      *
-     * @param todo
-     *          A {@link TodoBase}
-     * @return
-     *          Result message
+     * @param  todo  A {@link TodoBase}
+     *
+     * @return Result message
      **/
 
     public String saveTodo(TodoBase todo) {

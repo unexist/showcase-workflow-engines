@@ -11,7 +11,6 @@
 
 package dev.unexist.showcase.todo.domain.todo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import dev.unexist.showcase.todo.infrastructure.serializer.DateSerializer;
 
@@ -19,18 +18,15 @@ import java.time.LocalDate;
 
 public class DueDate {
     @JsonSerialize(using = DateSerializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate start;
 
     @JsonSerialize(using = DateSerializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate due;
 
     /**
      * Get start date
      *
-     * @return
-     *      Start date
+     * @return Start date
      **/
 
     public LocalDate getStart() {
@@ -41,7 +37,7 @@ public class DueDate {
      * Set start date
      *
      * @param start
-     *          Date to set
+     *         Date to set
      **/
 
     public void setStart(LocalDate start) {
@@ -51,8 +47,7 @@ public class DueDate {
     /**
      * Get due date
      *
-     * @return
-     *          Due date
+     * @return Due date
      **/
 
     public LocalDate getDue() {
@@ -63,7 +58,7 @@ public class DueDate {
      * Set due date
      *
      * @param due
-     *          Date to set
+     *         Date to set
      **/
 
     public void setDue(LocalDate due) {

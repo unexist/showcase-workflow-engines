@@ -13,10 +13,18 @@ package dev.unexist.showcase.todo.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "dev.unexist.showcase.todo")
 public class SpringRestApplication {
+
+    /**
+     * Main function
+     *
+     * @param  args  Commandline arguments
+     **/
+
     @SuppressWarnings("UncommentedMain")
     public static void main(String... args) {
         SpringApplication.run(SpringRestApplication.class, args);

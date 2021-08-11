@@ -43,6 +43,12 @@ public class CamundaEngine {
     @Inject
     AgroalDataSource defaultDataSource;
 
+    /**
+     * Get process engine
+     *
+     * @return Either newly created {@link ProcessEngine} or from cache
+     **/
+
     public ProcessEngine getProcessEngine() {
         if (null == this.processEngine) {
             this.createProcessEngineWithDataSource(this.defaultDataSource);
@@ -52,20 +58,30 @@ public class CamundaEngine {
         return this.processEngine;
     }
 
+    /**
+     * Create new engine with given {@link DataSource}
+     *
+     * @param  dataSource  A {@link DataSource}
+     **/
+
     private void createProcessEngineWithDataSource(DataSource dataSource) {
         try {
-            StandaloneProcessEngineConfiguration config = new StandaloneProcessEngineConfiguration();
+            StandaloneProcessEngineConfiguration config =
+                    new StandaloneProcessEngineConfiguration();
 
             List<ProcessEnginePlugin> pluginList = List.of(new SpinProcessEnginePlugin());
 
             /* Provide list of beans */
             Map<Object, Object> beanList = Map.of(
-                    ClassUtils.getShortNameAsProperty(CamundaTodoCheckTask.class), CamundaTodoCheckTask.class,
-                    ClassUtils.getShortNameAsProperty(CamundaTodoTallyTask.class), CamundaTodoTallyTask.class
+                    ClassUtils.getShortNameAsProperty(CamundaTodoCheckTask.class),
+                        CamundaTodoCheckTask.class,
+                    ClassUtils.getShortNameAsProperty(CamundaTodoTallyTask.class),
+                        CamundaTodoTallyTask.class
             );
 
             config.setDataSource(dataSource);
-            config.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
+            config.setDatabaseSchemaUpdate(
+                    ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
             config.setJobExecutorActivate(true);
             config.setProcessEnginePlugins(pluginList);
             config.setBeans(beanList);
@@ -76,8 +92,13 @@ public class CamundaEngine {
         }
     }
 
+    /**
+     * Deploy process on cached engine
+     **/
+
     private void deployProcess() {
-        RepositoryService repositoryService = this.processEngine.getRepositoryService();
+        RepositoryService repositoryService =
+                this.processEngine.getRepositoryService();
 
         try {
             ProcessDefinition process = repositoryService.createProcessDefinitionQuery()
