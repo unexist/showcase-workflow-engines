@@ -27,7 +27,7 @@ public class TodoService {
      *
      * @param  base  A {@link TodoBase} entry
      *
-     * @return
+     * @return Either {@code true} on success; otherwise {@code false}
      **/
 
     public boolean create(TodoBase base) {
