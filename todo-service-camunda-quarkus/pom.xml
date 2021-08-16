@@ -15,7 +15,7 @@
 
     <properties>
         <camunda-bpm-quarkus-engine.version>7.16.0-alpha4</camunda-bpm-quarkus-engine.version>
-        <camunda-spin-dataformat-json-jackson.version>1.9.2</camunda-spin-dataformat-json-jackson.version>
+        <camunda-spin-dataformat-json-jackson.version>1.11.0</camunda-spin-dataformat-json-jackson.version>
     </properties>
 
     <dependencies>
@@ -23,6 +23,14 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-container-image-jib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-h2</artifactId>
         </dependency>
 
         <!-- Camunda -->

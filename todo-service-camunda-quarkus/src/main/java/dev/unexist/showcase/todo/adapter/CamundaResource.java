@@ -12,8 +12,8 @@
 package dev.unexist.showcase.todo.adapter;
 
 import dev.unexist.showcase.todo.domain.todo.TodoBase;
-import dev.unexist.showcase.todo.infrastructure.camunda.CamundaEngine;
 import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.bpm.engine.variable.value.ObjectValue;
@@ -40,7 +40,10 @@ public class CamundaResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamundaResource.class);
 
     @Inject
-    CamundaEngine camundaEngine;
+    RepositoryService camundaRepositoryService;
+
+    @Inject
+    ProcessEngine processEngine;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -53,14 +56,22 @@ public class CamundaResource {
             @APIResponse(responseCode = "500", description = "Server error")
     })
     public Response create(TodoBase base, @Context UriInfo info) {
-        ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
+        String deploymentId = camundaRepositoryService.createDeployment()
+                .addClasspathResource("todo.bpmn")
+                .deploy()
+                .getId();
 
-        ObjectValue todoAsJson = Variables.objectValue(base)
-                        .serializationDataFormat("application/json").create();
+        LOGGER.info("Deployment {} started", deploymentId);
 
-        ProcessInstance processInstance = ProcEngine.getRuntimeService()
+        this.camundaRepositoryService.activateProcessDefinitionById("todo");
+
+        ObjectValue objectValue = Variables.objectValue(base)
+                .serializationDataFormat(Variables.SerializationDataFormats.JSON)
+                .create();
+
+        ProcessInstance processInstance = this.processEngine.getRuntimeService()
                 .createProcessInstanceByKey("todo")
-                .setVariable("todo", todoAsJson)
+                .setVariable("todo", objectValue)
                 .executeWithVariablesInReturn();
 
         String id = processInstance.getId();
