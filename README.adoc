@@ -13,6 +13,7 @@ This project holds a showcase for various workflow engine things.
 
 - https://docs.camunda.org/manual/7.15/reference/rest/overview/embeddability/
 - https://camunda.com/blog/2021/03/external-task-client-spring-bootified/
+- https://camunda.com/blog/2021/08/camunda-platform-runtime-7160-alpha4-released/
 
 === Kogito
 
