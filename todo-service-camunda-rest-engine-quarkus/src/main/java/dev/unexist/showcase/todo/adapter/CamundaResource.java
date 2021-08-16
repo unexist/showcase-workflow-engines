@@ -55,13 +55,13 @@ public class CamundaResource {
     public Response create(TodoBase base, @Context UriInfo info) {
         ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
 
-        ObjectValue todoAsJson = Variables.objectValue(base)
+        ObjectValue objectValue = Variables.objectValue(base)
                 .serializationDataFormat(Variables.SerializationDataFormats.JSON)
                 .create();
 
         ProcessInstance processInstance = ProcEngine.getRuntimeService()
                 .createProcessInstanceByKey("todo")
-                .setVariable("todo", todoAsJson)
+                .setVariable("todo", objectValue)
                 .executeWithVariablesInReturn();
 
         String id = processInstance.getId();
