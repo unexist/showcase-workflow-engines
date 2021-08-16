@@ -8,26 +8,15 @@
 
     <parent>
         <groupId>dev.unexist.showcase</groupId>
-        <artifactId>showcase-workflow-quarkus</artifactId>
+        <artifactId>showcase-workflow-engines</artifactId>
         <version>0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
-        <camunda-bom.version>7.15.0</camunda-bom.version>
+        <camunda-bpm-quarkus-engine.version>7.16.0-alpha4</camunda-bpm-quarkus-engine.version>
+        <camunda-spin-dataformat-json-jackson.version>1.9.2</camunda-spin-dataformat-json-jackson.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.camunda.bpm</groupId>
-                <artifactId>camunda-bom</artifactId>
-                <version>${camunda-bom.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- Quarkus -->
@@ -35,38 +24,24 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-container-image-jib</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-agroal</artifactId>
-        </dependency>
 
         <!-- Camunda -->
         <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-cdi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.camunda.bpm</groupId>
-            <artifactId>camunda-engine-rest</artifactId>
-            <classifier>classes</classifier>
+            <groupId>org.camunda.bpm.quarkus</groupId>
+            <artifactId>camunda-bpm-quarkus-engine</artifactId>
+            <version>${camunda-bpm-quarkus-engine.version}</version>
         </dependency>
 
         <!-- Camunda JSON/XML handling -->
         <dependency>
             <groupId>org.camunda.bpm</groupId>
             <artifactId>camunda-engine-plugin-spin</artifactId>
+            <version>${camunda-bpm-quarkus-engine.version}</version>
         </dependency>
         <dependency>
             <groupId>org.camunda.spin</groupId>
             <artifactId>camunda-spin-dataformat-json-jackson</artifactId>
+            <version>${camunda-spin-dataformat-json-jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>

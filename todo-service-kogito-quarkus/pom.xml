@@ -8,7 +8,7 @@
 
     <parent>
         <groupId>dev.unexist.showcase</groupId>
-        <artifactId>showcase-workflow-quarkus</artifactId>
+        <artifactId>showcase-workflow-engines</artifactId>
         <version>0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
