@@ -56,7 +56,8 @@ public class CamundaResource {
         ProcessEngine ProcEngine = this.camundaEngine.getProcessEngine();
 
         ObjectValue todoAsJson = Variables.objectValue(base)
-                        .serializationDataFormat("application/json").create();
+                .serializationDataFormat(Variables.SerializationDataFormats.JSON)
+                .create();
 
         ProcessInstance processInstance = ProcEngine.getRuntimeService()
                 .createProcessInstanceByKey("todo")
