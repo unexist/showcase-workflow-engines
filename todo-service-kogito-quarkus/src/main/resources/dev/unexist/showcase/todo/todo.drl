@@ -1,0 +1,13 @@
+package dev.unexist.showcase.todo.adapter;
+dialect  "mvel"
+
+import dev.unexist.showcase.todo.domain.todo.TodoBase;
+
+rule "isDone" ruleflow-group "TodoUpdater"
+    when
+        $todo: TodoBase(done != true)
+    then
+        modify($todo) {
+            setDone(true)
+        }
+end
