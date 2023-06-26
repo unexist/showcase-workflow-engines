@@ -13,7 +13,7 @@ package dev.unexist.showcase.todo.domain.todo;
 
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 

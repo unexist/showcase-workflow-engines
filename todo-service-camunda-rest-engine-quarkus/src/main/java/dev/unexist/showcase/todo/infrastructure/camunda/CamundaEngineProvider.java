@@ -14,7 +14,7 @@ package dev.unexist.showcase.todo.infrastructure.camunda;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.rest.spi.ProcessEngineProvider;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 

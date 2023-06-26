@@ -14,9 +14,9 @@ package dev.unexist.showcase.todo.infrastructure.camunda;
 import org.camunda.bpm.engine.cdi.annotation.StartProcess;
 import org.camunda.bpm.engine.cdi.impl.annotation.StartProcessInterceptor;
 
-import javax.annotation.Priority;
-import javax.enterprise.context.Dependent;
-import javax.interceptor.Interceptor;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.context.Dependent;
+import jakarta.interceptor.Interceptor;
 
 @Priority(1)
 @Dependent

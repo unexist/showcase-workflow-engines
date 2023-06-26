@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.sql.DataSource;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.sql.DataSource;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
