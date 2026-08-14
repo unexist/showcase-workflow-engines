@@ -1,0 +1,37 @@
+[tasks.test]
+run = "cargo test -- --test-threads 1 --nocapture"
+
+[tasks.cap]
+run = "cargo test"
+
+[tasks.trace]
+env.RUST_BACKTRACE = 1
+run = "cargo test"
+
+[tasks.build]
+raw_args = true
+run = "cargo build"
+
+[tasks.clean]
+run = "cargo clean"
+
+[tasks.crun]
+run = "cargo run"
+
+[tasks.cupgrade]
+usage = '''
+flag "-d --dry-run" {
+    help "Enable dry-running"
+}
+'''
+run = '''
+DRY_RUN="${usage_dry_run}"
+
+cargo upgrade -i $DRY_RUN
+'''
+
+[tasks.clippy]
+run = "bacon clippy"
+
+[tasks.cli]
+run = "PORT=8080 topcoat dev"
