@@ -91,11 +91,17 @@ async fn get_all(cx: &Cx) -> Result<Json<Vec<Todo>>> {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> anyhow::Result<()> {
+    let client = dapr::Client::connect_with_address(
+        "http://localhost:3500".to_string()).await?;
+
     let router = Router::builder()
         .discover()
         .app_context(Database::default())
+        .app_context(client)
         .build();
 
-    topcoat::start(router).await.unwrap();
+    topcoat::start(router).await?;
+
+    Ok(())
 }
