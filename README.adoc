@@ -1,4 +1,4 @@
-= Showcase for workflow engines based
+= Showcase for workflow engines
 
 This project holds a showcase for various workflow engine things.
 
