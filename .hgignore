@@ -5,3 +5,6 @@ syntax: glob
 target/
 .idea/
 .mvn/
+
+# Rust
+**/target/*
