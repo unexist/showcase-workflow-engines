@@ -10,6 +10,8 @@ repository = "https://hg.unexist.dev/showcase-microservices-rust"
 edition = "2024"
 
 [dependencies]
+anyhow = "1.0.104"
 serde = "1.0.229"
 tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros"] }
 topcoat = { version = "0.5.0", features = ["router", "tower"] }
+dapr = "0.19"
