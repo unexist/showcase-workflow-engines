@@ -36,8 +36,8 @@ run = "bacon clippy"
 [tasks.cli]
 run = "PORT=8080 topcoat dev"
 
-[tasks.dapr_env]
+[tasks.env]
 run = "dapr init --container-runtime=podman"
 
-[tasks.dapr_sidecar]
+[tasks.sidecar]
 run = "dapr run --app-id=todo-service --dapr-http-port=3500"
