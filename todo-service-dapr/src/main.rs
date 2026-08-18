@@ -57,7 +57,7 @@ impl Default for TodoClient {
 
 impl TodoClient {
     fn store(&self) {
-        unimplemented!();
+        todo!();
     }
 }
 
