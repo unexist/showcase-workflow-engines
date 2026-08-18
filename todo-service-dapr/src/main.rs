@@ -12,8 +12,10 @@
 use topcoat::{
     Result, context::{Cx, CxBuilder, app_context}, router::{Body, Next, Response, Router, RouterBuilderDiscoverExt, content::Json, layer, layout, page, route}, view::view,
 };
-use std::sync::Arc;
+use std::{mem::MaybeUninit, sync::Arc};
 use tokio::sync::Mutex;
+use dapr::{client::ApiTokenInterceptor, dapr::proto::runtime::v1::dapr_client::DaprClient};
+use tonic::{service::interceptor::InterceptedService, transport::Channel};
 
 #[derive(serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -23,11 +25,11 @@ struct Todo {
 }
 
 #[derive(Default)]
-struct Database {
+struct TodoDatabase {
     todos: Arc<Mutex<Vec<Todo>>>,
 }
 
-impl Database {
+impl TodoDatabase {
     fn push(&self, todo: &Todo) {
         if let Ok(mut todos) = self.todos.try_lock() {
             todos.push(todo.clone());
@@ -39,8 +41,32 @@ impl Database {
     }
 }
 
-fn db(cx: &Cx) -> &Database {
-    app_context::<Database>(cx)
+type TodoDaprClient = dapr::Client<DaprClient<InterceptedService<Channel, ApiTokenInterceptor>>>;
+
+struct TodoClient<T> {
+    client: Arc<MaybeUninit<Mutex<T>>>,
+}
+
+impl<T> Default for TodoClient<T> {
+    fn default() -> Self {
+        Self {
+            client: Arc::<Mutex<T>>::new_uninit(),
+        }
+    }
+}
+
+impl<T> TodoClient<T> {
+    fn store(&self) {
+        unimplemented!();
+    }
+}
+
+fn db(cx: &Cx) -> &TodoDatabase {
+    app_context::<TodoDatabase>(cx)
+}
+
+fn client<T>(cx: &Cx) -> &TodoClient<T> where T: Send + Sync + 'static {
+    app_context::<TodoClient<T>>(cx)
 }
 
 #[layout("/")]
@@ -81,6 +107,7 @@ async fn todos_list() -> Result {
 #[route(POST "/api/todos")]
 async fn create_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
     db(cx).push(&todo);
+    client(cx).store();
 
     Ok(Json(todo))
 }
@@ -92,13 +119,17 @@ async fn get_all(cx: &Cx) -> Result<Json<Vec<Todo>>> {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let client = dapr::Client::connect_with_address(
+    let dapr_client = dapr::Client::connect_with_address(
         "http://localhost:3500".to_string()).await?;
+
+    let mut todo_client = TodoClient::<TodoDaprClient>::default();
+
+    Arc::get_mut(&mut todo_client.client).unwrap().write(Mutex::new(dapr_client));
 
     let router = Router::builder()
         .discover()
-        .app_context(Database::default())
-        .app_context(client)
+        .app_context(TodoDatabase::default())
+        .app_context(todo_client)
         .build();
 
     topcoat::start(router).await?;
