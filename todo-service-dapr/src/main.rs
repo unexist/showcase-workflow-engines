@@ -26,18 +26,18 @@ struct Todo {
 
 #[derive(Default)]
 struct TodoDatabase {
-    todos: Arc<Mutex<Vec<Todo>>>,
+    list: Arc<Mutex<Vec<Todo>>>,
 }
 
 impl TodoDatabase {
     fn push(&self, todo: &Todo) {
-        if let Ok(mut todos) = self.todos.try_lock() {
-            todos.push(todo.clone());
+        if let Ok(mut list) = self.list.try_lock() {
+            list.push(todo.clone());
         }
     }
 
     async fn get_all(&self) -> Result<Vec<Todo>> {
-        Ok(self.todos.lock().await.clone())
+        Ok(self.list.lock().await.clone())
     }
 }
 
@@ -56,8 +56,13 @@ impl Default for TodoClient {
 }
 
 impl TodoClient {
-    fn store(&self) {
-        todo!();
+    fn store(&self, todo: &Todo) {
+        if let Ok(client) = self.client.try_lock() {
+        }
+    }
+
+    fn retrieve(&self) -> Result<Todo> {
+        todo!()
     }
 }
 
@@ -107,7 +112,20 @@ async fn todos_list() -> Result {
 #[route(POST "/api/todos")]
 async fn create_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
     db(cx).push(&todo);
-    client(cx).store();
+
+    Ok(Json(todo))
+}
+
+#[route(POST "/api/store")]
+async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
+    client(cx).store(&todo);
+
+    Ok(Json(todo))
+}
+
+#[route(POST "/api/retrieve")]
+async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
+    let todo = client(cx).retrieve();
 
     Ok(Json(todo))
 }
