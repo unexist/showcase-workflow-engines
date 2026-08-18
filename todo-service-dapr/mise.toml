@@ -47,3 +47,6 @@ run = "dapr run --app-id=todo-service --dapr-http-port=3500"
 
 [tasks.dapr_run]
 run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500 -- topcoat dev"
+
+[tasks.dapr_redis]
+run = "podman exec -it dapr_redis redis-cli"
