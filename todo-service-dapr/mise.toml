@@ -39,5 +39,8 @@ run = "PORT=8080 topcoat dev"
 [tasks.env]
 run = "dapr init --container-runtime=podman"
 
-[tasks.sidecar]
+[tasks.dapr_sidecar]
 run = "dapr run --app-id=todo-service --dapr-http-port=3500"
+
+[tasks.dapr_run]
+run = "dapr run --app-id=todo-service --dapr-http-port=3500 -- cargo run"
