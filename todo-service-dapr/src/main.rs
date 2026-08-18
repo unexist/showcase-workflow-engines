@@ -12,10 +12,11 @@
 use topcoat::{
     Result, context::{Cx, CxBuilder, app_context}, router::{Body, Next, Response, Router, RouterBuilderDiscoverExt, content::Json, layer, layout, page, route}, view::view,
 };
-use std::{mem::MaybeUninit, sync::Arc};
+use std::sync::Arc;
 use tokio::sync::Mutex;
 use dapr::{client::ApiTokenInterceptor, dapr::proto::runtime::v1::dapr_client::DaprClient};
 use tonic::{service::interceptor::InterceptedService, transport::Channel};
+use anyhow::bail;
 
 #[derive(serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -44,21 +45,28 @@ impl TodoDatabase {
 type TodoDaprClient = dapr::Client<DaprClient<InterceptedService<Channel, ApiTokenInterceptor>>>;
 
 struct TodoClient {
-    client: Arc<MaybeUninit<Mutex<TodoDaprClient>>>,
-}
-
-impl Default for TodoClient {
-    fn default() -> Self {
-        Self {
-            client: Arc::<Mutex<TodoDaprClient>>::new_uninit(),
-        }
-    }
+    client: Arc<Mutex<TodoDaprClient>>,
 }
 
 impl TodoClient {
-    fn store(&self, todo: &Todo) {
-        if let Ok(client) = self.client.try_lock() {
+    fn create(uri: &str) -> impl Future<Output=anyhow::Result<Self>> {
+        async {
+            match dapr::Client::connect_with_address(uri.to_string()).await {
+                Ok(client) => Ok(Self {
+                    client: Arc::new(Mutex::new(client)),
+                }),
+                Err(err) => bail!("That has failed: {}", err)
+            }
         }
+    }
+
+    async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
+        if let Ok(mut client) = self.client.try_lock() {
+            client.save_state("default", "todo",
+                serde_json::to_string(todo)?.into_bytes(), None, None, None).await?;
+        }
+
+        Ok(())
     }
 
     fn retrieve(&self) -> Result<Todo> {
@@ -116,38 +124,33 @@ async fn create_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
     Ok(Json(todo))
 }
 
-#[route(POST "/api/store")]
-async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
-    client(cx).store(&todo);
-
-    Ok(Json(todo))
-}
-
-#[route(POST "/api/retrieve")]
-async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
-    let todo = client(cx).retrieve();
-
-    Ok(Json(todo))
-}
-
 #[route(GET "/api/todos")]
 async fn get_all(cx: &Cx) -> Result<Json<Vec<Todo>>> {
     Ok(Json(db(cx).get_all().await?))
 }
 
+#[route(POST "/api/state/store")]
+async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
+    if let Err(err) = client(cx).store(&todo).await {
+        println!("Err={}", err);
+    }
+
+    Ok(Json(todo))
+}
+
+#[route(POST "/api/state/retrieve")]
+async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
+    let todo = client(cx).retrieve()?;
+
+    Ok(Json(todo))
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let dapr_client = dapr::Client::connect_with_address(
-        "http://localhost:3500".to_string()).await?;
-
-    let mut todo_client = TodoClient::default();
-
-    Arc::get_mut(&mut todo_client.client).unwrap().write(Mutex::new(dapr_client));
-
     let router = Router::builder()
         .discover()
         .app_context(TodoDatabase::default())
-        .app_context(todo_client)
+        .app_context(TodoClient::create("http://localhost:3500").await?)
         .build();
 
     topcoat::start(router).await?;
