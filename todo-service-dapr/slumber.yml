@@ -15,3 +15,15 @@ requests:
             accept: application/json
         body: !json { "description": "string", "done": true, "title": "string" }
 
+    store: !request
+        method: POST
+        url: "{{todo_host}}/api/store"
+        headers:
+            accept: application/json
+        body: !json { "description": "string", "done": true, "title": "string" }
+
+    retrieve: !request
+        method: POST
+        url: "{{todo_host}}/api/retrieve"
+        headers:
+            accept: application/json
