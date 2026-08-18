@@ -17,13 +17,13 @@ requests:
 
     store: !request
         method: POST
-        url: "{{todo_host}}/api/store"
+        url: "{{todo_host}}/api/state/store"
         headers:
             accept: application/json
         body: !json { "description": "string", "done": true, "title": "string" }
 
     retrieve: !request
         method: POST
-        url: "{{todo_host}}/api/retrieve"
+        url: "{{todo_host}}/api/state/retrieve"
         headers:
             accept: application/json
