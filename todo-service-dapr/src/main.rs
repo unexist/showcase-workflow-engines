@@ -43,19 +43,19 @@ impl TodoDatabase {
 
 type TodoDaprClient = dapr::Client<DaprClient<InterceptedService<Channel, ApiTokenInterceptor>>>;
 
-struct TodoClient<T> {
-    client: Arc<MaybeUninit<Mutex<T>>>,
+struct TodoClient {
+    client: Arc<MaybeUninit<Mutex<TodoDaprClient>>>,
 }
 
-impl<T> Default for TodoClient<T> {
+impl Default for TodoClient {
     fn default() -> Self {
         Self {
-            client: Arc::<Mutex<T>>::new_uninit(),
+            client: Arc::<Mutex<TodoDaprClient>>::new_uninit(),
         }
     }
 }
 
-impl<T> TodoClient<T> {
+impl TodoClient {
     fn store(&self) {
         unimplemented!();
     }
@@ -65,8 +65,8 @@ fn db(cx: &Cx) -> &TodoDatabase {
     app_context::<TodoDatabase>(cx)
 }
 
-fn client<T>(cx: &Cx) -> &TodoClient<T> where T: Send + Sync + 'static {
-    app_context::<TodoClient<T>>(cx)
+fn client(cx: &Cx) -> &TodoClient {
+    app_context::<TodoClient>(cx)
 }
 
 #[layout("/")]
@@ -122,7 +122,7 @@ async fn main() -> anyhow::Result<()> {
     let dapr_client = dapr::Client::connect_with_address(
         "http://localhost:3500".to_string()).await?;
 
-    let mut todo_client = TodoClient::<TodoDaprClient>::default();
+    let mut todo_client = TodoClient::default();
 
     Arc::get_mut(&mut todo_client.client).unwrap().write(Mutex::new(dapr_client));
 
