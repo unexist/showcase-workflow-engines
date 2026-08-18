@@ -1875,6 +1875,7 @@ dependencies = [
  "anyhow",
  "dapr",
  "serde",
+ "serde_json",
  "tokio",
  "tonic",
  "topcoat",
