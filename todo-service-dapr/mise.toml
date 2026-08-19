@@ -33,20 +33,17 @@ cargo upgrade -i $DRY_RUN
 [tasks.clippy]
 run = "bacon clippy"
 
-[tasks.cli]
-run = "PORT=8080 topcoat dev"
-
 [tasks.topcoat]
 run = "PORT=8080 topcoat dev"
 
-[tasks.dapr_env]
+[tasks.dapr_init]
 run = "dapr init --container-runtime=podman"
+
+[tasks.dapr_stop]
+run = "dapr stop"
 
 [tasks.dapr_sidecar]
 run = "dapr run --app-id=todo-service --dapr-http-port=3500"
 
 [tasks.dapr_run]
 run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500 -- topcoat dev"
-
-[tasks.dapr_redis]
-run = "podman exec -it dapr_redis redis-cli"
