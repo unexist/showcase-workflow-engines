@@ -1,9 +1,6 @@
 [tasks.test]
 run = "cargo test -- --test-threads 1 --nocapture"
 
-[tasks.cap]
-run = "cargo test"
-
 [tasks.trace]
 env.RUST_BACKTRACE = 1
 run = "cargo test"
@@ -39,11 +36,17 @@ run = "PORT=8080 topcoat dev"
 [tasks.dapr_init]
 run = "dapr init --container-runtime=podman"
 
+[tasks.dapr_redis]
+run = "podman exec -it dapr_redis redis-cli"
+
 [tasks.dapr_stop]
 run = "dapr stop"
+
+[tasks.dapr_dash]
+run = "diagrid-dev-dashboard"
 
 [tasks.dapr_sidecar]
 run = "dapr run --app-id=todo-service --dapr-http-port=3500"
 
 [tasks.dapr_run]
-run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500 -- topcoat dev"
+run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500 -- cargo run"
