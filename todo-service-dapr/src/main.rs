@@ -10,7 +10,7 @@
 ///
 
 use topcoat::{
-    Result, context::{Cx, CxBuilder, app_context}, router::{Body, Next, Response, Router, RouterBuilderDiscoverExt, content::Json, layer, layout, page, route}, view::view,
+    Result, context::{Cx, app_context}, router::{Body, Next, Router, RouterBuilderDiscoverExt, content::Json, layer, layout, page, response::Response, route}, view::view,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -62,7 +62,7 @@ impl TodoClient {
 
     async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
         if let Ok(mut client) = self.client.try_lock() {
-            client.save_state("default", "todo",
+            client.save_state("todo-service", "todo",
                 serde_json::to_string(todo)?.into_bytes(), None, None, None).await?;
         }
 
@@ -99,7 +99,7 @@ async fn root_layout(slot: Result) -> Result {
 }
 
 #[layer("/api")]
-async fn api_log(cx: &mut CxBuilder, body: Body, next: Next<'_>) -> Result<Response> {
+async fn api_log(cx: &Cx, body: Body, next: Next<'_>) -> Result<Response> {
     let response = next.run(cx, body).await?;
 
     println!("API response: {}", response.status());
