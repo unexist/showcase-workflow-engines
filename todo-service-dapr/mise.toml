@@ -36,6 +36,9 @@ run = "PORT=8080 topcoat dev"
 [tasks.dapr_init]
 run = "dapr init --container-runtime=podman"
 
+[tasks.dapr_uninstall]
+run = "dapr uninstall"
+
 [tasks.dapr_redis]
 run = "podman exec -it dapr_redis redis-cli"
 
