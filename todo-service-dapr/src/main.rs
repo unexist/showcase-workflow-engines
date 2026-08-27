@@ -16,7 +16,7 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use dapr::{client::ApiTokenInterceptor, dapr::proto::runtime::v1::dapr_client::DaprClient};
 use tonic::{service::interceptor::InterceptedService, transport::Channel};
-use anyhow::bail;
+use anyhow::{bail, anyhow};
 
 #[derive(serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -140,9 +140,10 @@ async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
 
 #[route(POST "/api/state/retrieve")]
 async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
-    let todo = client(cx).retrieve()?;
-
-    Ok(Json(todo))
+    match client(cx).retrieve() {
+        Ok(todo) => Ok(Json(todo)),
+        Err(err) => Err(err),
+    }
 }
 
 #[tokio::main]
