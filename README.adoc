@@ -55,6 +55,7 @@ This project holds a showcase for various workflow engine things.
 
 - https://dapr.io/
 - https://docs.dapr.io/developing-applications/sdks/rust/rust-client/
+- https://docs.diagrid.io/develop/local-development/dev-dashboard/
 - https://github.com/tokio-rs/topcoat
 
 == Problems

@@ -131,18 +131,23 @@ async fn get_all(cx: &Cx) -> Result<Json<Vec<Todo>>> {
 
 #[route(POST "/api/state/store")]
 async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
-    if let Err(err) = client(cx).store(&todo).await {
-        println!("Err={}", err);
+    match client(cx).store(&todo).await {
+        Ok(_) => Ok(Json(todo)),
+        Err(err) => {
+            println!("Err={}", err);
+            Err(err.into())
+        }
     }
-
-    Ok(Json(todo))
 }
 
 #[route(POST "/api/state/retrieve")]
 async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
     match client(cx).retrieve() {
         Ok(todo) => Ok(Json(todo)),
-        Err(err) => Err(err),
+        Err(err) => {
+            println!("Err={}", err);
+            Err(err.into())
+        }
     }
 }
 
