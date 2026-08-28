@@ -12,11 +12,10 @@
 use topcoat::{
     Result, context::{Cx, app_context}, router::{Body, Next, Router, RouterBuilderDiscoverExt, content::Json, layer, layout, page, response::Response, route}, view::view,
 };
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 use tokio::sync::Mutex;
-use dapr::{client::ApiTokenInterceptor, dapr::proto::runtime::v1::dapr_client::DaprClient};
-use tonic::{service::interceptor::InterceptedService, transport::Channel};
-use anyhow::{bail, anyhow};
+use dapr::{client::{ApiTokenInterceptor, ClientOptions}, dapr::proto::runtime::v1::dapr_client::DaprClient};
+use anyhow::bail;
 
 #[derive(serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -42,7 +41,7 @@ impl TodoDatabase {
     }
 }
 
-type TodoDaprClient = dapr::Client<DaprClient<InterceptedService<Channel, ApiTokenInterceptor>>>;
+type TodoDaprClient = dapr::Client<DaprClient<tonic::service::interceptor::InterceptedService<tonic::transport::channel::Channel, ApiTokenInterceptor>>>;
 
 struct TodoClient {
     client: Arc<Mutex<TodoDaprClient>>,
@@ -51,7 +50,11 @@ struct TodoClient {
 impl TodoClient {
     fn create(uri: &str) -> impl Future<Output=anyhow::Result<Self>> {
         async {
-            match dapr::Client::connect_with_address(uri.to_string()).await {
+            let opts = ClientOptions::new()
+                .with_address(uri.to_string())
+                .with_timeout(Duration::from_secs(10));
+
+            match dapr::Client::from_options(opts).await {
                 Ok(client) => Ok(Self {
                     client: Arc::new(Mutex::new(client)),
                 }),
@@ -62,7 +65,7 @@ impl TodoClient {
 
     async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
         if let Ok(mut client) = self.client.try_lock() {
-            client.save_state("todo-service", "todo",
+            client.save_state("statestore", "todo",
                 serde_json::to_string(todo)?.into_bytes(), None, None, None).await?;
         }
 
