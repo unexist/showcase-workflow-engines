@@ -2,28 +2,60 @@ profiles:
     development:
         data:
             todo_host: http://localhost:8080
+            dapr_host: http://localhost:3500
 
 requests:
-    list: !request
-        method: GET
-        url: "{{todo_host}}/api/todos"
+    api:
+        requests:
+            list:
+                method: GET
+                url: "{{todo_host}}/api/todos"
 
-    todo: !request
-        method: POST
-        url: "{{todo_host}}/api/todos"
-        headers:
-            accept: application/json
-        body: !json { "description": "string", "done": true, "title": "string" }
+            todo:
+                method: POST
+                url: "{{todo_host}}/api/todos"
+                body:
+                    type: json
+                    data:
+                        description: string
+                        done: true
+                        title: string
 
-    store: !request
-        method: POST
-        url: "{{todo_host}}/api/state/store"
-        headers:
-            accept: application/json
-        body: !json { "description": "string", "done": true, "title": "string" }
+    client:
+        requests:
+            store1:
+                name: save
+                method: POST
+                url: "{{todo_host}}/api/state/store"
+                body:
+                    type: json
+                    data:
+                        description: string
+                        done: true
+                        title: string
 
-    retrieve: !request
-        method: POST
-        url: "{{todo_host}}/api/state/retrieve"
-        headers:
-            accept: application/json
+            retrieve2:
+                name: retrieve
+                method: POST
+                url: "{{todo_host}}/api/state/retrieve"
+                headers:
+                    accept: application/json
+
+    no_client:
+        requests:
+            save_nc:
+                name: save
+                method: POST
+                url: "{{dapr_host}}/v1.0/state/savestore"
+                body:
+                    type: json
+                    data:
+                        key: name
+                        value: Bruce Wayxne
+
+            retrieve_nc:
+                name: retrieve
+                method: GET
+                url: "{{dapr_host}}/v1.0/state/savestore/name"
+                headers:
+                    accept: application/json
