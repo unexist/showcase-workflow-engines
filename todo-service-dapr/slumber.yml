@@ -46,16 +46,16 @@ requests:
             save_nc:
                 name: save
                 method: POST
-                url: "{{dapr_host}}/v1.0/state/savestore"
+                url: "{{dapr_host}}/v1.0/state/statestore"
                 body:
                     type: json
                     data:
                         key: name
-                        value: Bruce Wayxne
+                        value: "Bruce Wayne"
 
             retrieve_nc:
                 name: retrieve
                 method: GET
-                url: "{{dapr_host}}/v1.0/state/savestore/name"
+                url: "{{dapr_host}}/v1.0/state/statestore/name"
                 headers:
                     accept: application/json
