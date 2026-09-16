@@ -33,7 +33,7 @@ run = "bacon clippy"
 [tasks.topcoat]
 run = "PORT=8080 topcoat dev"
 
-[tasks.dapr_init]
+[tasks.dapr_install]
 run = "dapr init --container-runtime=podman"
 
 [tasks.dapr_uninstall]
