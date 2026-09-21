@@ -33,6 +33,9 @@ run = "bacon clippy"
 [tasks.topcoat]
 run = "PORT=8080 topcoat dev"
 
+[tasks.mongo]
+run = "podman run -d --rm -p 27017:27017 --name mongodb docker.io/mongo:5"
+
 [tasks.dapr_install]
 run = "dapr init --container-runtime=podman"
 
@@ -53,6 +56,9 @@ run = "dapr run --app-id=todo-service --dapr-http-port=3500"
 
 [tasks.dapr_run]
 run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500 -- cargo run"
+
+[tasks.dapr_mongo_run]
+run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500  --resources-path statestore/ -- cargo run"
 
 [tasks.dapr_save]
 run = "curl -X POST -H 'Content-Type: application/json' -d '[{ \"key\": \"name\", \"value\": \"Bruce Wayne\"}]' http://localhost:3500/v1.0/state/statestore"
