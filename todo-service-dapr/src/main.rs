@@ -65,7 +65,7 @@ impl TodoClient {
 
     async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
         if let Ok(mut client) = self.client.try_lock() {
-            client.save_state("statestore", "todo",
+            client.save_state(String::from("statestore_redis"), String::from("todo"),
                 serde_json::to_string(todo)?.into_bytes(), None, None, None).await?;
         }
 
