@@ -57,11 +57,11 @@ run = "dapr run --app-id=todo-service --dapr-http-port=3500"
 [tasks.dapr_run]
 run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500 -- cargo run"
 
-[tasks.dapr_mongo_run]
-run = "PORT=8080 dapr run --app-id=todo-service --dapr-http-port=3500  --resources-path statestore/ -- cargo run"
+[tasks.dapr_res_run]
+run = "PORT=8080 dapr run --app-id=todo-service --dapr-grpc-port=5001 --dapr-http-port=3500  --resources-path=statestore/ -- cargo run"
 
 [tasks.dapr_save]
-run = "curl -X POST -H 'Content-Type: application/json' -d '[{ \"key\": \"name\", \"value\": \"Bruce Wayne\"}]' http://localhost:3500/v1.0/state/statestore"
+run = "curl -X POST -H 'Content-Type: application/json' -d '[{ \"key\": \"name\", \"value\": \"Bruce Wayne\"}]' http://localhost:3500/v1.0/state/statestore_redis"
 
 [tasks.dapr_retrieve]
-run = "curl http://localhost:3500/v1.0/state/statestore/name"
+run = "curl http://localhost:3500/v1.0/state/statestore_redis/name"
