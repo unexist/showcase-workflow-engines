@@ -41,12 +41,12 @@ requests:
                 headers:
                     accept: application/json
 
-    no_client:
+    direct:
         requests:
             save_nc:
                 name: save
                 method: POST
-                url: "{{dapr_host}}/v1.0/state/statestore"
+                url: "{{dapr_host}}/v1.0/state/statestore_redis"
                 body:
                     type: json
                     data:
@@ -56,6 +56,6 @@ requests:
             retrieve_nc:
                 name: retrieve
                 method: GET
-                url: "{{dapr_host}}/v1.0/state/statestore/name"
+                url: "{{dapr_host}}/v1.0/state/statestore_redis/name"
                 headers:
                     accept: application/json
