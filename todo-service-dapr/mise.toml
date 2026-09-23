@@ -15,16 +15,20 @@ run = "cargo clean"
 [tasks.crun]
 run = "cargo run"
 
-[tasks.cupgrade]
+[tasks.cuc]
 usage = '''
 flag "-d --dry-run" {
     help "Enable dry-running"
 }
 '''
 run = '''
-DRY_RUN="${usage_dry_run}"
+DRY_RUN=
 
-cargo upgrade -i $DRY_RUN
+if [ ${usage_dry_run} ] ; then
+    DRY_RUN=-u
+fi
+
+cargo update-check $DRY_RUN
 '''
 
 [tasks.clippy]
