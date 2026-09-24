@@ -22,13 +22,11 @@ flag "-d --dry-run" {
 }
 '''
 run = '''
-DRY_RUN=
-
-if [ ${usage_dry_run} ] ; then
-    DRY_RUN=-u
-fi
-
-cargo update-check $DRY_RUN
+{% if usage.dry_run %}
+    cargo update-check
+{% else %}
+    cargo update-check -u
+{% endif %}
 '''
 
 [tasks.clippy]
