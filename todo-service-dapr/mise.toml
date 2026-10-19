@@ -22,10 +22,10 @@ flag "-d --dry-run" {
 }
 '''
 run = '''
-DRY_RUN=
+DRY_RUN=-u
 
 if [ ${usage_dry_run} ] ; then
-    DRY_RUN=-u
+    DRY_RUN=
 fi
 
 cargo update-check $DRY_RUN
