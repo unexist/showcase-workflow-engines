@@ -161,7 +161,7 @@ async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
         Ok(_) => Ok(Json(todo)),
         Err(err) => {
             println!("Err={}", err);
-            Err("")
+            Err(topcoat::Error::from_anyhow(err))
         }
     }
 }
@@ -172,7 +172,7 @@ async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
         Ok(todo) => Ok(Json(todo)),
         Err(err) => {
             println!("Err={}", err);
-            Err(err.into())
+            Err(err)
         }
     }
 }
