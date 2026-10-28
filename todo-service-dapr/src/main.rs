@@ -8,14 +8,22 @@
 /// This program can be distributed under the terms of the GNU GPLv2.
 /// See the file LICENSE for details.
 ///
-
-use topcoat::{
-    Result, context::{Cx, app_context}, router::{Body, Next, Router, RouterBuilderDiscoverExt, Slot, content::Json, layer, layout, page, response::Response, route}, view::{View, view},
+use anyhow::bail;
+use dapr::{
+    client::{ApiTokenInterceptor, ClientOptions},
+    dapr::proto::runtime::v1::dapr_client::DaprClient,
 };
 use std::{sync::Arc, time::Duration};
 use tokio::sync::Mutex;
-use dapr::{client::{ApiTokenInterceptor, ClientOptions}, dapr::proto::runtime::v1::dapr_client::DaprClient};
-use anyhow::bail;
+use topcoat::{
+    Result,
+    context::{Cx, app_context},
+    router::{
+        Body, Next, Router, RouterBuilderDiscoverExt, Slot, content::Json, layer, layout, page,
+        response::Response, route,
+    },
+    view::{View, view},
+};
 
 #[derive(serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -41,14 +49,21 @@ impl TodoDatabase {
     }
 }
 
-type TodoDaprClient = dapr::Client<DaprClient<tonic::service::interceptor::InterceptedService<tonic::transport::channel::Channel, ApiTokenInterceptor>>>;
+type TodoDaprClient = dapr::Client<
+    DaprClient<
+        tonic::service::interceptor::InterceptedService<
+            tonic::transport::channel::Channel,
+            ApiTokenInterceptor,
+        >,
+    >,
+>;
 
 struct TodoClient {
     client: Arc<Mutex<TodoDaprClient>>,
 }
 
 impl TodoClient {
-    fn create(uri: &str) -> impl Future<Output=anyhow::Result<Self>> {
+    fn create(uri: &str) -> impl Future<Output = anyhow::Result<Self>> {
         async {
             let opts = ClientOptions::new()
                 .with_address(uri.to_string())
@@ -58,15 +73,23 @@ impl TodoClient {
                 Ok(client) => Ok(Self {
                     client: Arc::new(Mutex::new(client)),
                 }),
-                Err(err) => bail!("That has failed: {}", err)
+                Err(err) => bail!("That has failed: {}", err),
             }
         }
     }
 
     async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
         if let Ok(mut client) = self.client.try_lock() {
-            client.save_state(String::from("statestore_redis"), String::from("todo"),
-                serde_json::to_string(todo)?.into_bytes(), None, None, None).await?;
+            client
+                .save_state(
+                    String::from("statestore_redis"),
+                    String::from("todo"),
+                    serde_json::to_string(todo)?.into_bytes(),
+                    None,
+                    None,
+                    None,
+                )
+                .await?;
         }
 
         Ok(())
@@ -138,7 +161,7 @@ async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
         Ok(_) => Ok(Json(todo)),
         Err(err) => {
             println!("Err={}", err);
-            Err(err.into())
+            Err("")
         }
     }
 }
