@@ -2122,6 +2122,7 @@ version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ffff49b885744cdb89ee158c5d81cc8c619692bd9f4ab3cae92ad1adc0ce612e"
 dependencies = [
+ "anyhow",
  "anymap3",
  "base64 0.22.1",
  "elsa",
