@@ -1,5 +1,5 @@
 ///
-/// @package Showcase-Microservices-Rust
+/// @package Showcase-Workflow-Engines
 ///
 /// @file Main entry
 /// @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
@@ -17,7 +17,7 @@ use std::{sync::Arc, time::Duration};
 use tokio::sync::Mutex;
 use topcoat::{
     Result,
-    context::{Cx, app_context},
+    context::{Cx, context},
     router::{
         Body, Next, Router, RouterBuilderDiscoverExt, Slot, content::Json, layer, layout, page,
         response::Response, route,
@@ -101,15 +101,15 @@ impl TodoClient {
 }
 
 fn db(cx: &Cx) -> &TodoDatabase {
-    app_context::<TodoDatabase>(cx)
+    context(cx)
 }
 
 fn client(cx: &Cx) -> &TodoClient {
-    app_context::<TodoClient>(cx)
+    context(cx)
 }
 
 #[layout("/")]
-async fn root_layout(slot: Slot<'_>) -> Result<impl View> {
+async fn root_layout(cx: &Cx, slot: Slot<'_>) -> Result<impl View> {
     Ok(view! {
         <!DOCTYPE html>
         <html>
@@ -134,12 +134,12 @@ async fn api_log(cx: &Cx, body: Body, next: Next<'_>) -> Result<Response> {
 }
 
 #[page("/")]
-async fn home() -> Result<impl View> {
+async fn home(cx: &Cx) -> Result<impl View> {
     Ok(view! { <h1>"Welcome"</h1> })
 }
 
 #[page("/todos")]
-async fn todos_list() -> Result<impl View> {
+async fn todos_list(cx: &Cx) -> Result<impl View> {
     Ok(view! { <h1>"All todos"</h1> })
 }
 
@@ -181,8 +181,8 @@ async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
 async fn main() -> anyhow::Result<()> {
     let router = Router::builder()
         .discover()
-        .app_context(TodoDatabase::default())
-        .app_context(TodoClient::create("http://localhost:3500").await?)
+        .with(TodoDatabase::default())
+        .with(TodoClient::create("http://localhost:3500").await?)
         .build();
 
     topcoat::start(router).await?;
