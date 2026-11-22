@@ -184,7 +184,7 @@ async fn state_retrieve(cx: &Cx) -> Result<Json<Todo>> {
 #[route(DELETE "/api/state")]
 async fn state_delete(cx: &Cx) -> Result<()> {
     match client(cx).delete() {
-        Ok(_) => Ok(()),
+        Ok(ok) => Ok(ok),
         Err(err) => {
             println!("Err={}", err);
             Err(err)
