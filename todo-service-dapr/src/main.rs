@@ -82,7 +82,7 @@ impl TodoClient {
         if let Ok(mut client) = self.client.try_lock() {
             client
                 .save_state(
-                    String::from("statestore_redis"),
+                    String::from("statestore"),
                     String::from("todo"),
                     serde_json::to_string(todo)?.into_bytes(),
                     None,
@@ -96,6 +96,10 @@ impl TodoClient {
     }
 
     fn retrieve(&self) -> Result<Todo> {
+        todo!()
+    }
+
+    fn delete(&self) -> Result<()> {
         todo!()
     }
 }
@@ -155,8 +159,8 @@ async fn get_all(cx: &Cx) -> Result<Json<Vec<Todo>>> {
     Ok(Json(db(cx).get_all().await?))
 }
 
-#[route(POST "/api/state/store")]
-async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
+#[route(POST "/api/state")]
+async fn state_store(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
     match client(cx).store(&todo).await {
         Ok(_) => Ok(Json(todo)),
         Err(err) => {
@@ -166,10 +170,21 @@ async fn store_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
     }
 }
 
-#[route(POST "/api/state/retrieve")]
-async fn retrieve_todo(cx: &Cx) -> Result<Json<Todo>> {
+#[route(GET "/api/state")]
+async fn state_retrieve(cx: &Cx) -> Result<Json<Todo>> {
     match client(cx).retrieve() {
         Ok(todo) => Ok(Json(todo)),
+        Err(err) => {
+            println!("Err={}", err);
+            Err(err)
+        }
+    }
+}
+
+#[route(DELETE "/api/state")]
+async fn state_delete(cx: &Cx) -> Result<()> {
+    match client(cx).delete() {
+        Ok(_) => Ok(()),
         Err(err) => {
             println!("Err={}", err);
             Err(err)
