@@ -25,7 +25,7 @@ use topcoat::{
     view::{View, view},
 };
 
-#[derive(serde::Deserialize, serde::Serialize, Clone)]
+#[derive(Default, serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
     title: String,
     description: String,
@@ -95,8 +95,18 @@ impl TodoClient {
         Ok(())
     }
 
-    fn retrieve(&self) -> Result<Todo> {
-        todo!()
+    async fn retrieve(&self) -> anyhow::Result<Todo> {
+        if let Ok(mut client) = self.client.try_lock() {
+            let res = client
+                .get_state(String::from("statestore"), String::from("todo"), None)
+                .await?;
+
+            println!("{:?}", res);
+
+            return Ok(Todo::default());
+        }
+
+        bail!("Something went wrong!");
     }
 
     fn delete(&self) -> Result<()> {
@@ -172,11 +182,11 @@ async fn state_store(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
 
 #[route(GET "/api/state")]
 async fn state_retrieve(cx: &Cx) -> Result<Json<Todo>> {
-    match client(cx).retrieve() {
+    match client(cx).retrieve().await {
         Ok(todo) => Ok(Json(todo)),
         Err(err) => {
             println!("Err={}", err);
-            Err(err)
+            Err(topcoat::Error::from_anyhow(err))
         }
     }
 }
