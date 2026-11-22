@@ -40,20 +40,23 @@ run = "PORT=8080 topcoat dev"
 [tasks.mongo]
 run = "podman run -d --rm -p 27017:27017 --name mongodb docker.io/mongo:5"
 
+[tasks.redis]
+run = "podman run -d --rm -p 6379:6379 --name redis docker.io/redis"
+
 [tasks.dapr_install]
 run = "dapr init --container-runtime=podman"
 
 [tasks.dapr_uninstall]
 run = "dapr uninstall"
 
-[tasks.dapr_redis]
-run = "podman exec -it dapr_redis redis-cli"
-
 [tasks.dapr_stop]
 run = "dapr stop"
 
 [tasks.dapr_dash]
 run = "diagrid-dev-dashboard"
+
+[tasks.dapr_redis]
+run = "podman exec -it dapr_redis redis-cli"
 
 [tasks.dapr_sidecar]
 run = "dapr run --app-id=todo-service --dapr-http-port=3500"
