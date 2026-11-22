@@ -1,0 +1,8 @@
+
+version: 1
+common:
+  resourcesPath: ./resources/
+apps:
+  - appID: todo-service
+    appDirPath: .
+    command: ["cargo", "run"]
