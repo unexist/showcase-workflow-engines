@@ -101,16 +101,22 @@ impl TodoClient {
                 .get_state(String::from("statestore"), String::from("todo"), None)
                 .await?;
 
-            println!("{:?}", res);
+            let todo: Todo = serde_json::from_slice(res.data.as_slice())?;
 
-            return Ok(Todo::default());
+            return Ok(todo);
         }
 
-        bail!("Something went wrong!");
+        bail!("No state found!");
     }
 
-    fn delete(&self) -> Result<()> {
-        todo!()
+    async fn delete(&self) -> anyhow::Result<()> {
+        if let Ok(mut client) = self.client.try_lock() {
+            client
+                .delete_state(String::from("statestore"), String::from("todo"), None)
+                .await?
+        }
+
+        Ok(())
     }
 }
 
@@ -193,11 +199,11 @@ async fn state_retrieve(cx: &Cx) -> Result<Json<Todo>> {
 
 #[route(DELETE "/api/state")]
 async fn state_delete(cx: &Cx) -> Result<()> {
-    match client(cx).delete() {
+    match client(cx).delete().await {
         Ok(ok) => Ok(ok),
         Err(err) => {
             println!("Err={}", err);
-            Err(err)
+            Err(topcoat::Error::from_anyhow(err))
         }
     }
 }
