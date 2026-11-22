@@ -46,6 +46,9 @@ run = "podman run -d --rm -p 6379:6379 --name redis docker.io/redis"
 [tasks.dapr_install]
 run = "dapr init --container-runtime=podman"
 
+[tasks.dapr_install_dash]
+run = "curl -sSL https://raw.githubusercontent.com/diagridio/dev-dashboard/main/scripts/install.sh | sh"
+
 [tasks.dapr_uninstall]
 run = "dapr uninstall"
 
