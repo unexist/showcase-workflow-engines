@@ -69,7 +69,7 @@ impl TodoClient {
                 .with_address(uri.to_string())
                 .with_timeout(Duration::from_secs(10));
 
-            match dapr::Client::from_options(opts).await {
+            match TodoDaprClient::from_options(opts).await {
                 Ok(client) => Ok(Self {
                     client: Arc::new(Mutex::new(client)),
                 }),
@@ -197,7 +197,7 @@ async fn main() -> anyhow::Result<()> {
     let router = Router::builder()
         .discover()
         .with(TodoDatabase::default())
-        .with(TodoClient::create("http://localhost:3500").await?)
+        .with(TodoClient::create("http://127.0.0.1:3500").await?)
         .build();
 
     topcoat::start(router).await?;
