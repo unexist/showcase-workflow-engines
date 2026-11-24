@@ -14,7 +14,7 @@ use anyhow::bail;
 use dapr::{
     client::{ApiTokenInterceptor, ClientOptions},
     dapr::proto::runtime::v1::dapr_client::DaprClient,
-    workflow::WorkflowClient,
+    workflow::{ScheduleOptions, WorkflowClient},
 };
 use std::{sync::Arc, time::Duration};
 use tokio::sync::Mutex;
@@ -28,7 +28,7 @@ use topcoat::{
     view::{View, view},
 };
 
-use crate::workflow::create_client;
+use crate::workflow::{INSTANCE_ID, TEST_WORKFLOW, create_client};
 
 #[derive(Default, serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -84,8 +84,8 @@ impl TodoClient {
     }
 
     async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
-        if let Ok(mut client) = self.dapr_client.try_lock() {
-            client
+        if let Ok(mut dapr_client) = self.dapr_client.try_lock() {
+            dapr_client
                 .save_state(
                     String::from("statestore"),
                     String::from("todo"),
@@ -101,8 +101,8 @@ impl TodoClient {
     }
 
     async fn retrieve(&self) -> anyhow::Result<Todo> {
-        if let Ok(mut client) = self.dapr_client.try_lock() {
-            let res = client
+        if let Ok(mut dapr_client) = self.dapr_client.try_lock() {
+            let res = dapr_client
                 .get_state(String::from("statestore"), String::from("todo"), None)
                 .await?;
 
@@ -115,10 +115,25 @@ impl TodoClient {
     }
 
     async fn delete(&self) -> anyhow::Result<()> {
-        if let Ok(mut client) = self.dapr_client.try_lock() {
-            client
+        if let Ok(mut dapr_client) = self.dapr_client.try_lock() {
+            dapr_client
                 .delete_state(String::from("statestore"), String::from("todo"), None)
                 .await?
+        }
+
+        Ok(())
+    }
+
+    async fn schedule(&self) -> anyhow::Result<()> {
+        if let Ok(mut workflow_client) = self.workflow_client.try_lock() {
+            workflow_client
+                .schedule_workflow(
+                    TEST_WORKFLOW,
+                    ScheduleOptions::new()
+                        .with_instance_id(INSTANCE_ID)
+                        .with_input(1),
+                )
+                .await?;
         }
 
         Ok(())
@@ -221,7 +236,13 @@ async fn state_delete(cx: &Cx) -> Result<()> {
 
 #[route(POST "/api/workflow")]
 async fn workflow_schedule(cx: &Cx) -> Result<()> {
-    Ok(())
+    match client(cx).schedule().await {
+        Ok(ok) => Ok(ok),
+        Err(err) => {
+            println!("Err={}", err);
+            Err(topcoat::Error::from_anyhow(err))
+        }
+    }
 }
 
 #[tokio::main]
