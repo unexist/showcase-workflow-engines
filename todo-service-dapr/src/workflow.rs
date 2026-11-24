@@ -19,15 +19,15 @@ use dapr::workflow::{
 };
 
 const INSTANCE_ID: &str = "a7a4168d-3a1c-41da-8a4f-e7f6d9c718d9";
-pub const TEST_WORKFLOW: &str = "TestWorkflow";
-pub const TEST_ACTIVITY: &str = "TestActivity";
-pub const FAIL_ACTIVITY: &str = "FailActivity";
-pub const TEST_EVENT: &str = "testEvent";
+const TEST_WORKFLOW: &str = "TestWorkflow";
+const TEST_ACTIVITY: &str = "TestActivity";
+const FAIL_ACTIVITY: &str = "FailActivity";
+const TEST_EVENT: &str = "testEvent";
 
 static STAGE: AtomicI32 = AtomicI32::new(0);
 static FAIL_ACTIVITY_TRIES: AtomicI32 = AtomicI32::new(0);
 
-pub async fn test_workflow(ctx: WorkflowContext) -> dapr::workflow::Result<Option<String>> {
+async fn test_workflow(ctx: WorkflowContext) -> dapr::workflow::Result<Option<String>> {
     let input: i32 = ctx.get_input_typed()?;
     let _: String = ctx.call_activity_typed(TEST_ACTIVITY, input).await?;
 
@@ -61,7 +61,7 @@ pub async fn test_workflow(ctx: WorkflowContext) -> dapr::workflow::Result<Optio
     Ok(Some(serde_json::to_string(&output)?))
 }
 
-pub async fn test_activity(
+async fn test_activity(
     ctx: ActivityContext,
     input: Option<String>,
 ) -> dapr::workflow::Result<Option<String>> {
@@ -71,7 +71,7 @@ pub async fn test_activity(
     Ok(Some(serde_json::to_string(&format!("Stage: {stage}"))?))
 }
 
-pub async fn fail_activity(
+async fn fail_activity(
     _ctx: ActivityContext,
     _input: Option<String>,
 ) -> dapr::workflow::Result<Option<String>> {
@@ -80,7 +80,7 @@ pub async fn fail_activity(
     Err(WorkflowError::Other("Dummy activity error".to_string()))
 }
 
-pub async fn create_client() -> impl Future<Output = anyhow::Result<WorkflowClient>> {
+pub fn create_client() -> impl Future<Output = anyhow::Result<WorkflowClient>> {
     async {
         let mut workflow_client = WorkflowClient::new().await?;
 
