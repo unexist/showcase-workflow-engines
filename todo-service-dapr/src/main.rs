@@ -137,6 +137,7 @@ async fn root_layout(cx: &Cx, slot: Slot<'_>) -> Result<impl View> {
                 <nav>
                     <a href="/">"Home"</a>
                     <a href="/todos">"Todos"</a>
+                    <a href="/workflows">"Workflows"</a>
                 </nav>
                 (slot)
             </body>
@@ -161,6 +162,11 @@ async fn home(cx: &Cx) -> Result<impl View> {
 #[page("/todos")]
 async fn todos_list(cx: &Cx) -> Result<impl View> {
     Ok(view! { <h1>"All todos"</h1> })
+}
+
+#[page("/workflows")]
+async fn workflows_list(cx: &Cx) -> Result<impl View> {
+    Ok(view! { <h1>"All workflows"</h1> })
 }
 
 #[route(POST "/api/todos")]
