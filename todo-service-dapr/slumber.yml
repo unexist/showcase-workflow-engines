@@ -63,3 +63,25 @@ requests:
                 url: "{{dapr_host}}/v1.0/state/statestore/name"
                 headers:
                     accept: application/json
+
+    workflow:
+        requests:
+            schedule:
+                method: POST
+                url: "{{todo_host}}/api/workflow"
+                body:
+                    type: json
+                    data:
+                        description: string
+                        done: true
+                        title: string
+
+            purge:
+                method: DELETE
+                url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$[id].id') }}"
+                body:
+                    type: json
+                    data:
+                        description: string
+                        done: true
+                        title: string
