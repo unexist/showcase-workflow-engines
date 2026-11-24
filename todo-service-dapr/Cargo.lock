@@ -1734,7 +1734,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "todo-service-topcoat"
+name = "todo-service-dapr-topcoat"
 version = "0.1.0"
 dependencies = [
  "anyhow",

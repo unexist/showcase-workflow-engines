@@ -1,12 +1,12 @@
 [package]
-name = "todo-service-topcoat"
+name = "todo-service-dapr-topcoat"
 version = "0.1.0"
 authors = [
     "Christoph Kappel <christoph@unexist.dev>"
 ]
 license-file = "LICENSE"
 homepage = "https://unexist.dev"
-repository = "https://hg.unexist.dev/showcase-microservices-rust"
+repository = "https://hg.unexist.dev/showcase-workflow-engines"
 edition = "2024"
 
 [dependencies]
