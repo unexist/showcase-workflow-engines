@@ -8,10 +8,13 @@
 /// This program can be distributed under the terms of the GNU GPLv2.
 /// See the file LICENSE for details.
 ///
+mod workflow;
+
 use anyhow::bail;
 use dapr::{
     client::{ApiTokenInterceptor, ClientOptions},
     dapr::proto::runtime::v1::dapr_client::DaprClient,
+    workflow::WorkflowClient,
 };
 use std::{sync::Arc, time::Duration};
 use tokio::sync::Mutex;
@@ -24,6 +27,8 @@ use topcoat::{
     },
     view::{View, view},
 };
+
+use crate::workflow::create_client;
 
 #[derive(Default, serde::Deserialize, serde::Serialize, Clone)]
 struct Todo {
@@ -59,27 +64,27 @@ type TodoDaprClient = dapr::Client<
 >;
 
 struct TodoClient {
-    client: Arc<Mutex<TodoDaprClient>>,
+    dapr_client: Arc<Mutex<TodoDaprClient>>,
+    workflow_client: Arc<Mutex<WorkflowClient>>,
 }
 
 impl TodoClient {
     fn create(uri: &str) -> impl Future<Output = anyhow::Result<Self>> {
         async {
+            /* Dapr client */
             let opts = ClientOptions::new()
                 .with_address(uri.to_string())
                 .with_timeout(Duration::from_secs(10));
 
-            match TodoDaprClient::from_options(opts).await {
-                Ok(client) => Ok(Self {
-                    client: Arc::new(Mutex::new(client)),
-                }),
-                Err(err) => bail!("That has failed: {}", err),
-            }
+            Ok(Self {
+                dapr_client: Arc::new(Mutex::new(TodoDaprClient::from_options(opts).await?)),
+                workflow_client: Arc::new(Mutex::new(create_client().await?)),
+            })
         }
     }
 
     async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
-        if let Ok(mut client) = self.client.try_lock() {
+        if let Ok(mut client) = self.dapr_client.try_lock() {
             client
                 .save_state(
                     String::from("statestore"),
@@ -96,7 +101,7 @@ impl TodoClient {
     }
 
     async fn retrieve(&self) -> anyhow::Result<Todo> {
-        if let Ok(mut client) = self.client.try_lock() {
+        if let Ok(mut client) = self.dapr_client.try_lock() {
             let res = client
                 .get_state(String::from("statestore"), String::from("todo"), None)
                 .await?;
@@ -110,7 +115,7 @@ impl TodoClient {
     }
 
     async fn delete(&self) -> anyhow::Result<()> {
-        if let Ok(mut client) = self.client.try_lock() {
+        if let Ok(mut client) = self.dapr_client.try_lock() {
             client
                 .delete_state(String::from("statestore"), String::from("todo"), None)
                 .await?
@@ -212,6 +217,11 @@ async fn state_delete(cx: &Cx) -> Result<()> {
             Err(topcoat::Error::from_anyhow(err))
         }
     }
+}
+
+#[route(POST "/api/workflow")]
+async fn workflow_schedule(cx: &Cx) -> Result<()> {
+    Ok(())
 }
 
 #[tokio::main]
