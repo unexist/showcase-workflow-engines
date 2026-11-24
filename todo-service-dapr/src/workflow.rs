@@ -18,8 +18,8 @@ use dapr::workflow::{
     WorkflowContext, WorkflowContextExt, WorkflowError,
 };
 
-const INSTANCE_ID: &str = "a7a4168d-3a1c-41da-8a4f-e7f6d9c718d9";
-const TEST_WORKFLOW: &str = "TestWorkflow";
+pub const INSTANCE_ID: &str = "a7a4168d-3a1c-41da-8a4f-e7f6d9c718d9";
+pub const TEST_WORKFLOW: &str = "TestWorkflow";
 const TEST_ACTIVITY: &str = "TestActivity";
 const FAIL_ACTIVITY: &str = "FailActivity";
 const TEST_EVENT: &str = "testEvent";
