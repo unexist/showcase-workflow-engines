@@ -7,62 +7,67 @@ profiles:
 requests:
     api:
         requests:
+            create:
+                method: POST
+                url: "{{todo_host}}/api/todos"
+                body:
+                    type: json
+                    data:
+                        description: string
+                        done: true
+                        title: string
+
             list:
                 method: GET
                 url: "{{todo_host}}/api/todos"
 
-            todo:
-                method: POST
-                url: "{{todo_host}}/api/todos"
-                body:
-                    type: json
-                    data:
-                        description: string
-                        done: true
-                        title: string
-
-    client:
+    state:
         requests:
-            store:
-                method: POST
-                url: "{{todo_host}}/api/state"
-                body:
-                    type: json
-                    data:
-                        description: string
-                        done: true
-                        title: string
+            client:
+                requests:
+                    client_store:
+                        name: store
+                        method: POST
+                        url: "{{todo_host}}/api/state"
+                        body:
+                            type: json
+                            data:
+                                description: string
+                                done: true
+                                title: string
 
-            retrieve:
-                method: GET
-                url: "{{todo_host}}/api/state"
-                headers:
-                    accept: application/json
+                    client_retrieve:
+                        name: retrieve
+                        method: GET
+                        url: "{{todo_host}}/api/state"
+                        headers:
+                            accept: application/json
 
-            delete:
-                method: DELETE
-                url: "{{todo_host}}/api/state"
-                headers:
-                    accept: application/json
+                    client_delete:
+                        name: delete
+                        method: DELETE
+                        url: "{{todo_host}}/api/state"
+                        headers:
+                            accept: application/json
 
-    direct:
-        requests:
-            store_direct:
-                name: store
-                method: POST
-                url: "{{dapr_host}}/v1.0/state/statestore"
-                body:
-                    type: json
-                    data:
-                        key: name
-                        value: "Bruce Wayne"
+            direct:
+                requests:
+                    store_direct:
+                        name: store
+                        method: POST
+                        url: "{{dapr_host}}/v1.0/state/statestore"
+                        body:
+                            type: json
+                            data:
+                                key: name
+                                value: "Bruce Wayne"
 
-            retrieve_direct:
-                name: retrieve
-                method: GET
-                url: "{{dapr_host}}/v1.0/state/statestore/name"
-                headers:
-                    accept: application/json
+                    retrieve_direct:
+                        name: retrieve
+                        method: GET
+                        url: "{{dapr_host}}/v1.0/state/statestore/name"
+                        headers:
+                            accept: application/json
 
     workflow:
         requests:
