@@ -96,6 +96,8 @@ pub fn create_client() -> impl Future<Output = anyhow::Result<WorkflowClient>> {
             .registry_mut()
             .add_activity(FAIL_ACTIVITY, fail_activity);
 
+        workflow_client.start_worker().await?;
+
         Ok(workflow_client)
     }
 }
