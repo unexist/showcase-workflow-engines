@@ -113,4 +113,16 @@ impl TodoClient {
 
         bail!("Locking the client failed!");
     }
+
+    pub(crate) async fn metadata(&self, instance_id: &String) -> anyhow::Result<String> {
+        if let Ok(mut workflow_client) = self.workflow_client.try_lock() {
+            let metadata = workflow_client.wait_for_workflow_start(instance_id).await?;
+
+            println!("Workflow status={:?}", metadata.runtime_status);
+
+            return Ok(metadata.runtime_status.to_string());
+        }
+
+        bail!("Locking the client failed!");
+    }
 }
