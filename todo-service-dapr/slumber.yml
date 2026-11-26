@@ -81,13 +81,13 @@ requests:
                         done: true
                         title: string
 
-            metdata:
+            metadata:
                 method: GET
-                url: "{{todo_host}}/api/workflow/{{ response('metadata') | jsonpath('$[id].id') }}"
+                url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$.id') }}"
 
             purge:
                 method: DELETE
-                url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$[id].id') }}"
+                url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$.id') }}"
                 body:
                     type: json
                     data:
