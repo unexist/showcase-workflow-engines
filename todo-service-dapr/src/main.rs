@@ -136,6 +136,37 @@ async fn workflow_schedule(cx: &Cx) -> Result<Json<WorkflowReply>> {
     }
 }
 
+mod instance_id {
+    use topcoat::{
+        Result,
+        context::Cx,
+        router::{content::Json, path_param, route},
+    };
+
+    use crate::client;
+
+    path_param!(instance_id: String else bad_request);
+
+    #[derive(Default, serde::Serialize, Clone)]
+    struct WorkflowStatus {
+        id: String,
+        status: String,
+    }
+
+    #[route(GET "/api/workflow/{instance_id}")]
+    pub(crate) async fn workflow_metadata(cx: &Cx) -> Result<Json<WorkflowStatus>> {
+        let id = instance_id(cx)?.clone();
+
+        match client(cx).metadata(&id).await {
+            Ok(status) => Ok(Json(WorkflowStatus { id, status })),
+            Err(err) => {
+                println!("Err={}", err);
+                Err(topcoat::Error::from_anyhow(err))
+            }
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let router = Router::builder()
