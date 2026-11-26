@@ -36,7 +36,7 @@ async fn test_workflow(ctx: WorkflowContext) -> dapr::workflow::Result<Option<St
         .await?;
 
     if !ctx.is_replaying() {
-        println!("workflow received event payload: {event_payload}");
+        println!("Workflow received event payload: {event_payload}");
     }
 
     let output: String = ctx.call_activity_typed(TEST_ACTIVITY, input).await?;
@@ -54,7 +54,7 @@ async fn test_workflow(ctx: WorkflowContext) -> dapr::workflow::Result<Option<St
 
     if fail_result.is_ok() {
         return Err(WorkflowError::Other(
-            "unexpected no error executing fail activity".to_string(),
+            "Unexpected no error executing fail activity".to_string(),
         ));
     }
 
