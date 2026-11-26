@@ -10,13 +10,10 @@
 ///
 mod workflow;
 
-mod todo_client;
-
+mod client;
+mod database;
 mod todo;
 
-use dapr::{client::ApiTokenInterceptor, dapr::proto::runtime::v1::dapr_client::DaprClient};
-use std::sync::Arc;
-use tokio::sync::Mutex;
 use topcoat::{
     Result,
     context::{Cx, context},
@@ -27,33 +24,7 @@ use topcoat::{
     view::{View, view},
 };
 
-use crate::{todo::Todo, todo_client::TodoClient};
-
-#[derive(Default)]
-struct TodoDatabase {
-    list: Arc<Mutex<Vec<Todo>>>,
-}
-
-impl TodoDatabase {
-    fn push(&self, todo: &Todo) {
-        if let Ok(mut list) = self.list.try_lock() {
-            list.push(todo.clone());
-        }
-    }
-
-    async fn get_all(&self) -> Result<Vec<Todo>> {
-        Ok(self.list.lock().await.clone())
-    }
-}
-
-type TodoDaprClient = dapr::Client<
-    DaprClient<
-        tonic::service::interceptor::InterceptedService<
-            tonic::transport::channel::Channel,
-            ApiTokenInterceptor,
-        >,
-    >,
->;
+use crate::{client::TodoClient, database::TodoDatabase, todo::Todo};
 
 fn db(cx: &Cx) -> &TodoDatabase {
     context(cx)
@@ -149,10 +120,15 @@ async fn state_delete(cx: &Cx) -> Result<()> {
     }
 }
 
+#[derive(Default, serde::Serialize, Clone)]
+struct WorkflowReply {
+    id: String,
+}
+
 #[route(POST "/api/workflow")]
-async fn workflow_schedule(cx: &Cx) -> Result<()> {
+async fn workflow_schedule(cx: &Cx) -> Result<Json<WorkflowReply>> {
     match client(cx).schedule().await {
-        Ok(ok) => Ok(ok),
+        Ok(instance_id) => Ok(Json(WorkflowReply { id: instance_id })),
         Err(err) => {
             println!("Err={}", err);
             Err(topcoat::Error::from_anyhow(err))
