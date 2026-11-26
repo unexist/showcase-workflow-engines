@@ -18,7 +18,6 @@ use dapr::workflow::{
     WorkflowContext, WorkflowContextExt, WorkflowError,
 };
 
-pub const INSTANCE_ID: &str = "a7a4168d-3a1c-41da-8a4f-e7f6d9c718d9";
 pub const TEST_WORKFLOW: &str = "TestWorkflow";
 const TEST_ACTIVITY: &str = "TestActivity";
 const FAIL_ACTIVITY: &str = "FailActivity";
@@ -95,8 +94,6 @@ pub fn create_client() -> impl Future<Output = anyhow::Result<WorkflowClient>> {
         workflow_client
             .registry_mut()
             .add_activity(FAIL_ACTIVITY, fail_activity);
-
-        workflow_client.start_worker().await?;
 
         Ok(workflow_client)
     }
