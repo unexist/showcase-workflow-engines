@@ -11,18 +11,29 @@
 use std::{sync::Arc, time::Duration};
 
 use dapr::{
-    client::ClientOptions,
-    workflow::{ScheduleOptions, WorkflowClient},
+    client::{ApiTokenInterceptor, ClientOptions},
+    dapr::proto::runtime::v1::dapr_client::DaprClient,
+    workflow::{ScheduleOptions, WorkerHandle, WorkflowClient},
 };
 
 use anyhow::bail;
 use tokio::sync::Mutex;
 
-use crate::{TodoDaprClient, todo::Todo, workflow};
+use crate::{todo::Todo, workflow};
+
+type TodoDaprClient = dapr::Client<
+    DaprClient<
+        tonic::service::interceptor::InterceptedService<
+            tonic::transport::channel::Channel,
+            ApiTokenInterceptor,
+        >,
+    >,
+>;
 
 pub(crate) struct TodoClient {
     dapr_client: Arc<Mutex<TodoDaprClient>>,
     workflow_client: Arc<Mutex<WorkflowClient>>,
+    _worker: Arc<Mutex<WorkerHandle>>,
 }
 
 impl TodoClient {
@@ -33,9 +44,14 @@ impl TodoClient {
                 .with_address(uri.to_string())
                 .with_timeout(Duration::from_secs(10));
 
+            /* Workflow & worker */
+            let mut workflow_client = workflow::create_client().await?;
+            let worker = workflow_client.start_worker().await?;
+
             Ok(Self {
                 dapr_client: Arc::new(Mutex::new(TodoDaprClient::from_options(opts).await?)),
-                workflow_client: Arc::new(Mutex::new(workflow::create_client().await?)),
+                workflow_client: Arc::new(Mutex::new(workflow_client)),
+                _worker: Arc::new(Mutex::new(worker)),
             })
         }
     }
@@ -68,7 +84,7 @@ impl TodoClient {
             return Ok(todo);
         }
 
-        bail!("No state found!");
+        bail!("Locking the client failed!");
     }
 
     pub(crate) async fn delete(&self) -> anyhow::Result<()> {
@@ -78,23 +94,23 @@ impl TodoClient {
                 .await?
         }
 
-        Ok(())
+        bail!("Locking the client failed!");
     }
 
-    pub(crate) async fn schedule(&self) -> anyhow::Result<()> {
+    pub(crate) async fn schedule(&self) -> anyhow::Result<String> {
         if let Ok(mut workflow_client) = self.workflow_client.try_lock() {
             let instance_id = workflow_client
                 .schedule_workflow(
                     workflow::TEST_WORKFLOW,
-                    ScheduleOptions::new()
-                        .with_instance_id(workflow::INSTANCE_ID)
-                        .with_input(1),
+                    ScheduleOptions::new().with_input(1),
                 )
                 .await?;
 
             println!("instance_id={}", instance_id);
+
+            return Ok(instance_id);
         }
 
-        Ok(())
+        bail!("Locking the client failed!");
     }
 }
