@@ -10,13 +10,12 @@
 ///
 mod workflow;
 
-use anyhow::bail;
-use dapr::{
-    client::{ApiTokenInterceptor, ClientOptions},
-    dapr::proto::runtime::v1::dapr_client::DaprClient,
-    workflow::{ScheduleOptions, WorkflowClient},
-};
-use std::{sync::Arc, time::Duration};
+mod todo_client;
+
+mod todo;
+
+use dapr::{client::ApiTokenInterceptor, dapr::proto::runtime::v1::dapr_client::DaprClient};
+use std::sync::Arc;
 use tokio::sync::Mutex;
 use topcoat::{
     Result,
@@ -28,14 +27,7 @@ use topcoat::{
     view::{View, view},
 };
 
-use crate::workflow::{INSTANCE_ID, TEST_WORKFLOW, create_client};
-
-#[derive(Default, serde::Deserialize, serde::Serialize, Clone)]
-struct Todo {
-    title: String,
-    description: String,
-    done: bool,
-}
+use crate::{todo::Todo, todo_client::TodoClient};
 
 #[derive(Default)]
 struct TodoDatabase {
@@ -62,83 +54,6 @@ type TodoDaprClient = dapr::Client<
         >,
     >,
 >;
-
-struct TodoClient {
-    dapr_client: Arc<Mutex<TodoDaprClient>>,
-    workflow_client: Arc<Mutex<WorkflowClient>>,
-}
-
-impl TodoClient {
-    fn create(uri: &str) -> impl Future<Output = anyhow::Result<Self>> {
-        async {
-            /* Dapr client */
-            let opts = ClientOptions::new()
-                .with_address(uri.to_string())
-                .with_timeout(Duration::from_secs(10));
-
-            Ok(Self {
-                dapr_client: Arc::new(Mutex::new(TodoDaprClient::from_options(opts).await?)),
-                workflow_client: Arc::new(Mutex::new(create_client().await?)),
-            })
-        }
-    }
-
-    async fn store(&self, todo: &Todo) -> anyhow::Result<()> {
-        if let Ok(mut dapr_client) = self.dapr_client.try_lock() {
-            dapr_client
-                .save_state(
-                    String::from("statestore"),
-                    String::from("todo"),
-                    serde_json::to_string(todo)?.into_bytes(),
-                    None,
-                    None,
-                    None,
-                )
-                .await?;
-        }
-
-        Ok(())
-    }
-
-    async fn retrieve(&self) -> anyhow::Result<Todo> {
-        if let Ok(mut dapr_client) = self.dapr_client.try_lock() {
-            let res = dapr_client
-                .get_state(String::from("statestore"), String::from("todo"), None)
-                .await?;
-
-            let todo: Todo = serde_json::from_slice(res.data.as_slice())?;
-
-            return Ok(todo);
-        }
-
-        bail!("No state found!");
-    }
-
-    async fn delete(&self) -> anyhow::Result<()> {
-        if let Ok(mut dapr_client) = self.dapr_client.try_lock() {
-            dapr_client
-                .delete_state(String::from("statestore"), String::from("todo"), None)
-                .await?
-        }
-
-        Ok(())
-    }
-
-    async fn schedule(&self) -> anyhow::Result<()> {
-        if let Ok(mut workflow_client) = self.workflow_client.try_lock() {
-            workflow_client
-                .schedule_workflow(
-                    TEST_WORKFLOW,
-                    ScheduleOptions::new()
-                        .with_instance_id(INSTANCE_ID)
-                        .with_input(1),
-                )
-                .await?;
-        }
-
-        Ok(())
-    }
-}
 
 fn db(cx: &Cx) -> &TodoDatabase {
     context(cx)
