@@ -1,13 +1,13 @@
-///
-/// @package Showcase-Workflow-Engines
-///
-/// @file Todo client entry
-/// @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
-/// @version $Id$
-///
-/// This program can be distributed under the terms of the GNU GPLv2.
-/// See the file LICENSE for details.
-///
+//!
+//! @package Showcase-Workflow-Engines
+//!
+//! @file Todo client entry
+//! @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
+//! @version $Id$
+//!
+//! This program can be distributed under the terms of the GNU GPLv2.
+//! See the file LICENSE for details.
+//!
 use std::{sync::Arc, time::Duration};
 
 use dapr::{
@@ -121,6 +121,26 @@ impl TodoClient {
             println!("Workflow status={:?}", metadata.runtime_status);
 
             return Ok(metadata.runtime_status.to_string());
+        }
+
+        bail!("Locking the client failed!");
+    }
+
+    pub(crate) async fn terminate(&self, instance_id: &String) -> anyhow::Result<()> {
+        if let Ok(mut workflow_client) = self.workflow_client.try_lock() {
+            workflow_client.terminate_workflow(instance_id).await?;
+
+            return Ok(());
+        }
+
+        bail!("Locking the client failed!");
+    }
+
+    pub(crate) async fn purge(&self, instance_id: &String) -> anyhow::Result<()> {
+        if let Ok(mut workflow_client) = self.workflow_client.try_lock() {
+            workflow_client.purge_workflow_state(instance_id).await?;
+
+            return Ok(());
         }
 
         bail!("Locking the client failed!");

@@ -1,13 +1,13 @@
-///
-/// @package Showcase-Workflow-Engines
-///
-/// @file Workflow handlers
-/// @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
-/// @version $Id$
-///
-/// This program can be distributed under the terms of the GNU GPLv2.
-/// See the file LICENSE for details.
-///
+//!
+//! @package Showcase-Workflow-Engines
+//!
+//! @file Workflow handlers
+//! @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
+//! @version $Id$
+//!
+//! This program can be distributed under the terms of the GNU GPLv2.
+//! See the file LICENSE for details.
+//!
 use std::{
     sync::atomic::{AtomicI32, Ordering},
     time::Duration,
