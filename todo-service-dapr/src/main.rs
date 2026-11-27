@@ -1,15 +1,16 @@
-///
-/// @package Showcase-Workflow-Engines
-///
-/// @file Main entry
-/// @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
-/// @version $Id$
-///
-/// This program can be distributed under the terms of the GNU GPLv2.
-/// See the file LICENSE for details.
-///
+//!
+//! @package Showcase-Workflow-Engines
+//!
+//! @file Main entry
+//! @copyright 2026-present Christoph Kappel <christoph@unexist.dev>
+//! @version $Id$
+//!
+//! This program can be distributed under the terms of the GNU GPLv2.
+//! See the file LICENSE for details.
+//!
 mod workflow;
 
+mod api;
 mod client;
 mod database;
 mod todo;
@@ -73,98 +74,6 @@ async fn todos_list(cx: &Cx) -> Result<impl View> {
 #[page("/workflows")]
 async fn workflows_list(cx: &Cx) -> Result<impl View> {
     Ok(view! { <h1>"All workflows"</h1> })
-}
-
-#[route(POST "/api/todos")]
-async fn create_todo(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
-    db(cx).push(&todo);
-
-    Ok(Json(todo))
-}
-
-#[route(GET "/api/todos")]
-async fn get_all(cx: &Cx) -> Result<Json<Vec<Todo>>> {
-    Ok(Json(db(cx).get_all().await?))
-}
-
-#[route(POST "/api/state")]
-async fn state_store(cx: &Cx, Json(todo): Json<Todo>) -> Result<Json<Todo>> {
-    match client(cx).store(&todo).await {
-        Ok(_) => Ok(Json(todo)),
-        Err(err) => {
-            println!("Err={}", err);
-            Err(topcoat::Error::from_anyhow(err))
-        }
-    }
-}
-
-#[route(GET "/api/state")]
-async fn state_retrieve(cx: &Cx) -> Result<Json<Todo>> {
-    match client(cx).retrieve().await {
-        Ok(todo) => Ok(Json(todo)),
-        Err(err) => {
-            println!("Err={}", err);
-            Err(topcoat::Error::from_anyhow(err))
-        }
-    }
-}
-
-#[route(DELETE "/api/state")]
-async fn state_delete(cx: &Cx) -> Result<()> {
-    match client(cx).delete().await {
-        Ok(ok) => Ok(ok),
-        Err(err) => {
-            println!("Err={}", err);
-            Err(topcoat::Error::from_anyhow(err))
-        }
-    }
-}
-
-#[derive(Default, serde::Serialize, Clone)]
-struct WorkflowReply {
-    id: String,
-}
-
-#[route(POST "/api/workflow")]
-async fn workflow_schedule(cx: &Cx) -> Result<Json<WorkflowReply>> {
-    match client(cx).schedule().await {
-        Ok(instance_id) => Ok(Json(WorkflowReply { id: instance_id })),
-        Err(err) => {
-            println!("Err={}", err);
-            Err(topcoat::Error::from_anyhow(err))
-        }
-    }
-}
-
-mod instance_id {
-    use topcoat::{
-        Result,
-        context::Cx,
-        router::{content::Json, path_param, route},
-    };
-
-    use crate::client;
-
-    path_param!(instance_id: String else bad_request);
-
-    #[derive(Default, serde::Serialize, Clone)]
-    struct WorkflowStatus {
-        id: String,
-        status: String,
-    }
-
-    #[route(GET "/api/workflow/{instance_id}")]
-    pub(crate) async fn workflow_metadata(cx: &Cx) -> Result<Json<WorkflowStatus>> {
-        let id = instance_id(cx)?.clone();
-
-        match client(cx).metadata(&id).await {
-            Ok(status) => Ok(Json(WorkflowStatus { id, status })),
-            Err(err) => {
-                println!("Err={}", err);
-                Err(topcoat::Error::from_anyhow(err))
-            }
-        }
-    }
 }
 
 #[tokio::main]
