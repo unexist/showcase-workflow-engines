@@ -19,13 +19,12 @@ use topcoat::{
     Result,
     context::{Cx, context},
     router::{
-        Body, Next, Router, RouterBuilderDiscoverExt, Slot, content::Json, layer, layout, page,
-        response::Response, route,
+        Body, Next, Router, RouterBuilderDiscoverExt, Slot, layer, layout, page, response::Response,
     },
     view::{View, view},
 };
 
-use crate::{client::TodoClient, database::TodoDatabase, todo::Todo};
+use crate::{client::TodoClient, database::TodoDatabase};
 
 fn db(cx: &Cx) -> &TodoDatabase {
     context(cx)
