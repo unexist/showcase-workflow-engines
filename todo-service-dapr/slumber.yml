@@ -85,12 +85,10 @@ requests:
                 method: GET
                 url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$.id') }}"
 
+            terminate:
+                method: PATCH
+                url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$.id') }}"
+
             purge:
                 method: DELETE
                 url: "{{todo_host}}/api/workflow/{{ response('schedule') | jsonpath('$.id') }}"
-                body:
-                    type: json
-                    data:
-                        description: string
-                        done: true
-                        title: string
