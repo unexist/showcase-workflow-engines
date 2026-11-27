@@ -75,7 +75,7 @@ mod instance_id {
         }
     }
 
-    #[route(DELETE "/api/workflow/{instance_id}")]
+    #[route(PATCH "/api/workflow/{instance_id}")]
     pub(crate) async fn workflow_terminate(cx: &Cx) -> Result<()> {
         let id = instance_id(cx)?.clone();
 
